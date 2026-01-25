@@ -3,13 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
+    protected AuthService $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     public function register(Request $request)
     {
         $request->validate([
@@ -18,18 +26,12 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $result = $this->authService->register($request->only('name', 'email', 'password'));
 
         return response()->json([
-            'access_token' => $token,
+            'access_token' => $result['token'],
             'token_type' => 'Bearer',
-            'user' => $user,
+            'user' => $result['user'],
         ], 201);
     }
 
@@ -40,29 +42,59 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        $result = $this->authService->login($request->email, $request->password);
+
+        if (!$result) {
             return response()->json([
                 'message' => 'Invalid credentials'
             ], 401);
         }
 
-        $user = User::where('email', $request->email)->firstOrFail();
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
-            'access_token' => $token,
+            'access_token' => $result['token'],
             'token_type' => 'Bearer',
-            'user' => $user,
+            'user' => $result['user'],
         ]);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $this->authService->logout($request->user());
 
         return response()->json([
             'message' => 'Logged out successfully'
         ]);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = $this->authService->sendPasswordResetLink($request->email);
+
+        return $status === Password::RESET_LINK_SENT
+            ? response()->json(['message' => 'Password reset link sent to your email'])
+            : response()->json(['message' => 'Unable to send reset link'], 400);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $status = $this->authService->resetPassword($request->only('email', 'password', 'password_confirmation', 'token'));
+
+        return $status === Password::PASSWORD_RESET
+            ? response()->json(['message' => 'Password has been reset successfully'])
+            : response()->json(['message' => 'Unable to reset password'], 400);
+    }
+
+    public function user(Request $request)
+    {
+        return response()->json($request->user());
     }
 
     public function redirectToProvider($provider)
@@ -100,10 +132,5 @@ class AuthController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-    public function user(Request $request)
-    {
-        return response()->json($request->user());
     }
 }
