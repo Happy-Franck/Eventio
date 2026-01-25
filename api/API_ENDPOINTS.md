@@ -212,6 +212,135 @@ Gère le callback OAuth et crée/connecte l'utilisateur.
 
 ---
 
+## Profile Management Endpoints
+
+### 9. Get Profile
+**GET** `/profile`
+
+Récupère le profil de l'utilisateur authentifié.
+
+**Headers:**
+```
+Authorization: Bearer {access_token}
+```
+
+**Response (200):**
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "email_verified_at": null,
+  "created_at": "2026-01-26T10:00:00.000000Z",
+  "updated_at": "2026-01-26T10:00:00.000000Z"
+}
+```
+
+---
+
+### 10. Update Profile
+**PUT** `/profile`
+
+Met à jour les informations du profil.
+
+**Headers:**
+```
+Authorization: Bearer {access_token}
+```
+
+**Body:**
+```json
+{
+  "name": "John Smith",
+  "email": "johnsmith@example.com"
+}
+```
+
+**Response (200):**
+```json
+{
+  "message": "Profile updated successfully",
+  "user": {
+    "id": 1,
+    "name": "John Smith",
+    "email": "johnsmith@example.com",
+    "email_verified_at": null,
+    "created_at": "2026-01-26T10:00:00.000000Z",
+    "updated_at": "2026-01-26T10:00:00.000000Z"
+  }
+}
+```
+
+---
+
+### 11. Update Password
+**PUT** `/profile/password`
+
+Change le mot de passe de l'utilisateur.
+
+**Headers:**
+```
+Authorization: Bearer {access_token}
+```
+
+**Body:**
+```json
+{
+  "current_password": "oldpassword123",
+  "password": "newpassword123",
+  "password_confirmation": "newpassword123"
+}
+```
+
+**Response (200):**
+```json
+{
+  "message": "Password updated successfully"
+}
+```
+
+**Error Response (422):**
+```json
+{
+  "message": "Current password is incorrect"
+}
+```
+
+---
+
+### 12. Delete Account
+**DELETE** `/profile`
+
+Supprime le compte utilisateur.
+
+**Headers:**
+```
+Authorization: Bearer {access_token}
+```
+
+**Body:**
+```json
+{
+  "password": "password123"
+}
+```
+
+**Response (200):**
+```json
+{
+  "message": "Account deleted successfully"
+}
+```
+
+**Error Response (422):**
+```json
+{
+  "message": "Password is incorrect"
+}
+```
+
+---
+
 ## Notes d'utilisation
 
 ### Authentication
