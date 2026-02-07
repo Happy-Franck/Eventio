@@ -1,0 +1,48 @@
+{
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "loading": "Loading...",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "confirm": "Confirm",
+  "edit": "Edit",
+  "create": "Create",
+  "update": "Update",
+  "submit": "Submit",
+  "back": "Back",
+  "next": "Next",
+  "previous": "Previous",
+  "close": "Close",
+  "welcome": "Welcome to",
+  "getStarted": "Get Started",
+  "startFreeTrial": "Start Free Trial",
+  "tagline": "Your all-in-one platform for managing events, connecting with people, and creating unforgettable experiences.",
+  "features": {
+    "easyPlanning": {
+      "title": "Easy Planning",
+      "description": "Create and manage events effortlessly with our intuitive interface and powerful tools."
+    },
+    "connectPeople": {
+      "title": "Connect People",
+      "description": "Bring people together and build meaningful connections through amazing events."
+    },
+    "trackSuccess": {
+      "title": "Track Success",
+      "description": "Monitor your events with real-time analytics and insights to improve every time."
+    }
+  },
+  "messages": {
+    "success": "Operation completed successfully",
+    "error": "An error occurred. Please try again",
+    "notFound": "Resource not found",
+    "unauthorized": "Unauthorized access",
+    "forbidden": "Access forbidden",
+    "validationError": "Validation error",
+    "serverError": "Internal server error"
+  }
+}

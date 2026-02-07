@@ -1,0 +1,7 @@
+# Documentation Markdown files
+*.md
+!README.md
+
+# Keep important documentation in subdirectories
+!api/README.md
+!front/README.md

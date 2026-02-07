@@ -1,0 +1,48 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "profile": "Profil",
+    "logout": "Déconnexion"
+  },
+  "loading": "Chargement...",
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "delete": "Supprimer",
+  "confirm": "Confirmer",
+  "edit": "Modifier",
+  "create": "Créer",
+  "update": "Mettre à jour",
+  "submit": "Soumettre",
+  "back": "Retour",
+  "next": "Suivant",
+  "previous": "Précédent",
+  "close": "Fermer",
+  "welcome": "Bienvenue sur",
+  "getStarted": "Commencer",
+  "startFreeTrial": "Essai gratuit",
+  "tagline": "Votre plateforme tout-en-un pour gérer des événements, connecter avec les gens et créer des expériences inoubliables.",
+  "features": {
+    "easyPlanning": {
+      "title": "Planification facile",
+      "description": "Créez et gérez des événements sans effort avec notre interface intuitive et nos outils puissants."
+    },
+    "connectPeople": {
+      "title": "Connecter les gens",
+      "description": "Rassemblez les gens et créez des connexions significatives à travers des événements incroyables."
+    },
+    "trackSuccess": {
+      "title": "Suivre le succès",
+      "description": "Surveillez vos événements avec des analyses en temps réel et des insights pour vous améliorer à chaque fois."
+    }
+  },
+  "messages": {
+    "success": "Opération terminée avec succès",
+    "error": "Une erreur s'est produite. Veuillez réessayer",
+    "notFound": "Ressource non trouvée",
+    "unauthorized": "Accès non autorisé",
+    "forbidden": "Accès interdit",
+    "validationError": "Erreur de validation",
+    "serverError": "Erreur interne du serveur"
+  }
+}

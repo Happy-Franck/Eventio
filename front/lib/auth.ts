@@ -51,6 +51,19 @@ class AuthAPI {
     const data = await response.json();
 
     if (!response.ok) {
+      // Log detailed error for debugging
+      console.error('API Error:', {
+        status: response.status,
+        endpoint,
+        data
+      });
+      
+      // Handle validation errors
+      if (response.status === 422 && data.errors) {
+        const errorMessages = Object.values(data.errors).flat().join(', ');
+        throw new Error(errorMessages);
+      }
+      
       throw new Error(data.message || 'An error occurred');
     }
 

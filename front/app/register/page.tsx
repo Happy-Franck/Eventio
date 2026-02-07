@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authAPI } from '@/lib/auth';
+import { useTranslation } from '@/lib/i18n';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,11 +22,43 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      await authAPI.register(name, email, password, passwordConfirmation);
-      router.push('/dashboard');
+      const response = await fetch('http://localhost:8000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          name, 
+          email, 
+          password, 
+          password_confirmation: passwordConfirmation 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Redirect to OTP verification page with registration data
+        const params = new URLSearchParams({
+          email: email,
+          name: name,
+          password: password,
+        });
+        router.push(`/verify-otp?${params.toString()}`);
+      } else {
+        // Handle validation errors
+        if (response.status === 422 && data.errors) {
+          const errorMessages = Object.values(data.errors).flat().join(', ');
+          setError(errorMessages as string);
+        } else {
+          setError(data.message || t('auth.register.error'));
+        }
+        setLoading(false);
+      }
     } catch (err: any) {
-      setError(err.message || 'Registration failed');
-    } finally {
+      setError(err.message || t('auth.register.error'));
       setLoading(false);
     }
   };
@@ -39,8 +73,8 @@ export default function RegisterPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
           {/* Header */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
-            <p className="text-gray-600 mt-2">Join us today</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t('auth.register.title')}</h1>
+            <p className="text-gray-600 mt-2">{t('auth.register.subtitle')}</p>
           </div>
 
           {/* Error Message */}
@@ -54,7 +88,7 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
+                {t('auth.register.name')}
               </label>
               <input
                 id="name"
@@ -69,7 +103,7 @@ export default function RegisterPage() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+                {t('auth.register.email')}
               </label>
               <input
                 id="email"
@@ -78,13 +112,13 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                placeholder="you@example.com"
+                placeholder={t('auth.emailPlaceholder')}
               />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+                {t('auth.register.password')}
               </label>
               <input
                 id="password"
@@ -100,7 +134,7 @@ export default function RegisterPage() {
 
             <div>
               <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
+                {t('auth.register.confirmPassword')}
               </label>
               <input
                 id="password_confirmation"
@@ -119,7 +153,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating account...' : 'Create Account'}
+              {loading ? t('loading') : t('auth.register.submit')}
             </button>
           </form>
 
@@ -129,7 +163,7 @@ export default function RegisterPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">Or sign up with</span>
+              <span className="px-4 bg-white text-gray-500">{t('auth.login.orContinueWith')}</span>
             </div>
           </div>
 
@@ -161,9 +195,9 @@ export default function RegisterPage() {
 
           {/* Sign In Link */}
           <p className="text-center text-sm text-gray-600">
-            Already have an account?{' '}
+            {t('auth.register.haveAccount')}{' '}
             <Link href="/login" className="text-purple-600 hover:text-purple-700 font-semibold">
-              Sign in
+              {t('auth.register.signIn')}
             </Link>
           </p>
         </div>

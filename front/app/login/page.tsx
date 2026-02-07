@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authAPI } from '@/lib/auth';
+import { useTranslation } from '@/lib/i18n';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +23,7 @@ export default function LoginPage() {
       await authAPI.login(email, password);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message || t('auth.login.error'));
     } finally {
       setLoading(false);
     }
@@ -37,8 +39,8 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
           {/* Header */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-            <p className="text-gray-600 mt-2">Sign in to your account</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t('auth.login.welcomeBack')}</h1>
+            <p className="text-gray-600 mt-2">{t('auth.login.subtitle')}</p>
           </div>
 
           {/* Error Message */}
@@ -52,7 +54,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+                {t('auth.email')}
               </label>
               <input
                 id="email"
@@ -61,13 +63,13 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                placeholder="you@example.com"
+                placeholder={t('auth.emailPlaceholder')}
               />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+                {t('auth.password')}
               </label>
               <input
                 id="password"
@@ -83,10 +85,10 @@ export default function LoginPage() {
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center">
                 <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
-                <span className="ml-2 text-gray-600">Remember me</span>
+                <span className="ml-2 text-gray-600">{t('auth.login.rememberMe')}</span>
               </label>
               <Link href="/forgot-password" className="text-blue-600 hover:text-blue-700 font-medium">
-                Forgot password?
+                {t('auth.login.forgotPassword')}
               </Link>
             </div>
 
@@ -95,7 +97,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? t('loading') : t('auth.login.button')}
             </button>
           </form>
 
@@ -105,7 +107,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">Or continue with</span>
+              <span className="px-4 bg-white text-gray-500">{t('auth.login.orContinueWith')}</span>
             </div>
           </div>
 
@@ -137,9 +139,9 @@ export default function LoginPage() {
 
           {/* Sign Up Link */}
           <p className="text-center text-sm text-gray-600">
-            Don't have an account?{' '}
+            {t('auth.login.noAccount')}{' '}
             <Link href="/register" className="text-blue-600 hover:text-blue-700 font-semibold">
-              Sign up
+              {t('auth.register.title')}
             </Link>
           </p>
         </div>

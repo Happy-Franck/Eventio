@@ -29,6 +29,28 @@ class AuthController extends Controller
         $result = $this->authService->register($request->only('name', 'email', 'password'));
 
         return response()->json([
+            'message' => 'Verification code sent to your email. Please verify to complete registration.',
+            'email' => $result['email'],
+            'otp_sent' => true,
+        ], 200);
+    }
+
+    public function completeRegistration(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'name' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $result = $this->authService->completeRegistration(
+            $request->email,
+            $request->name,
+            $request->password
+        );
+
+        return response()->json([
+            'message' => 'Registration completed successfully',
             'access_token' => $result['token'],
             'token_type' => 'Bearer',
             'user' => $result['user'],
