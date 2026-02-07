@@ -24,9 +24,10 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'role' => 'nullable|string|in:client,prestataire',
         ]);
 
-        $result = $this->authService->register($request->only('name', 'email', 'password'));
+        $result = $this->authService->register($request->only('name', 'email', 'password', 'role'));
 
         return response()->json([
             'access_token' => $result['token'],
@@ -94,7 +95,7 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json($request->user()->load('roles'));
     }
 
     public function redirectToProvider($provider)
@@ -117,6 +118,9 @@ class AuthController extends Controller
                     'provider_id' => $socialUser->getId(),
                     'password' => Hash::make(uniqid()),
                 ]);
+                
+                // Assigner le rôle client par défaut pour les nouveaux utilisateurs OAuth
+                $user->assignRole('client');
             }
 
             $token = $user->createToken('auth_token')->plainTextToken;
@@ -124,7 +128,7 @@ class AuthController extends Controller
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-                'user' => $user,
+                'user' => $user->load('roles'),
             ]);
         } catch (\Exception $e) {
             return response()->json([

@@ -18,10 +18,14 @@ class AuthService
             'password' => Hash::make($data['password']),
         ]);
 
+        // Assigner le rôle par défaut (client)
+        $role = $data['role'] ?? 'client';
+        $user->assignRole($role);
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
-            'user' => $user,
+            'user' => $user->load('roles'),
             'token' => $token,
         ];
     }
@@ -36,7 +40,7 @@ class AuthService
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
-            'user' => $user,
+            'user' => $user->load('roles'),
             'token' => $token,
         ];
     }
