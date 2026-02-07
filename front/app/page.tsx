@@ -17,8 +17,8 @@ export default function Home() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       ),
-      title: 'Easy Planning',
-      description: 'Create and manage events effortlessly with our intuitive interface and powerful tools.',
+      title: t('features.easyPlanning.title'),
+      description: t('features.easyPlanning.description'),
       color: 'from-blue-500 to-cyan-500',
     },
     {
@@ -27,8 +27,8 @@ export default function Home() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
       ),
-      title: 'Connect People',
-      description: 'Bring people together and build meaningful connections through amazing events.',
+      title: t('features.connectPeople.title'),
+      description: t('features.connectPeople.description'),
       color: 'from-purple-500 to-pink-500',
     },
     {
@@ -37,8 +37,8 @@ export default function Home() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
       ),
-      title: 'Track Success',
-      description: 'Monitor your events with real-time analytics and insights to improve every time.',
+      title: t('features.trackSuccess.title'),
+      description: t('features.trackSuccess.description'),
       color: 'from-pink-500 to-rose-500',
     },
   ];
@@ -49,13 +49,13 @@ export default function Home() {
 
       {/* Floating decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-40 left-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-40 right-20 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-500" />
+        <div className="absolute top-40 left-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl animate-pulse pointer-events-none" />
+        <div className="absolute bottom-40 right-20 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse delay-1000 pointer-events-none" />
+        <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-500 pointer-events-none" />
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 bg-white/10 backdrop-blur-md border-b border-white/10 sticky top-0">
+      <nav className="relative z-50 bg-white/10 backdrop-blur-md border-b border-white/10 sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
             <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ export default function Home() {
         <div className="text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8">
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-sm text-white/80">Trusted by 10,000+ event organizers</span>
+            <span className="text-sm text-white/80">{t('stats.trustedBy')}</span>
           </div>
 
           <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 leading-tight">
@@ -144,10 +144,10 @@ export default function Home() {
         {/* Stats */}
         <div className="mt-32 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { value: '50K+', label: 'Events Created' },
-            { value: '2M+', label: 'Attendees' },
-            { value: '99.9%', label: 'Uptime' },
-            { value: '150+', label: 'Countries' },
+            { value: '50K+', label: t('stats.eventsCreated') },
+            { value: '2M+', label: t('stats.attendees') },
+            { value: '99.9%', label: t('stats.uptime') },
+            { value: '150+', label: t('stats.countries') },
           ].map((stat, index) => (
             <div key={index} className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stat.value}</div>
@@ -170,7 +170,7 @@ export default function Home() {
               <span className="text-white/80 font-semibold">EventHub</span>
             </div>
             <p className="text-white/40 text-sm">
-              © 2024 EventHub. All rights reserved.
+              {t('footer.copyright')}
             </p>
           </div>
         </div>

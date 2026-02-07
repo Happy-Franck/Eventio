@@ -36,6 +36,16 @@
       "description": "Surveillez vos événements avec des analyses en temps réel et des insights pour vous améliorer à chaque fois."
     }
   },
+  "stats": {
+    "eventsCreated": "Événements créés",
+    "attendees": "Participants",
+    "uptime": "Disponibilité",
+    "countries": "Pays",
+    "trustedBy": "Approuvé par plus de 10 000 organisateurs d'événements"
+  },
+  "footer": {
+    "copyright": "© 2024 EventHub. Tous droits réservés."
+  },
   "messages": {
     "success": "Opération terminée avec succès",
     "error": "Une erreur s'est produite. Veuillez réessayer",
