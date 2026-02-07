@@ -7,11 +7,13 @@ import { authAPI } from '@/lib/auth';
 import { useTranslation } from '@/lib/i18n';
 import EventBackground from '@/components/EventBackground';
 
-export default function LoginPage() {
+export default function RegisterClientPage() {
   const router = useRouter();
   const { t } = useTranslation();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -22,11 +24,44 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await authAPI.login(email, password);
-      router.push('/dashboard');
+      const response = await fetch('http://localhost:8000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          name, 
+          email, 
+          password, 
+          password_confirmation: passwordConfirmation,
+          role: 'client'
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Redirect to OTP verification page
+        const params = new URLSearchParams({
+          email: email,
+          name: name,
+          password: password,
+          role: 'client',
+        });
+        router.push(`/verify-otp?${params.toString()}`);
+      } else {
+        if (response.status === 422 && data.errors) {
+          const errorMessages = Object.values(data.errors).flat().join(', ');
+          setError(errorMessages as string);
+        } else {
+          setError(data.message || t('auth.register.error'));
+        }
+        setLoading(false);
+      }
     } catch (err: any) {
-      setError(err.message || t('auth.login.error'));
-    } finally {
+      setError(err.message || t('auth.register.error'));
       setLoading(false);
     }
   };
@@ -41,9 +76,9 @@ export default function LoginPage() {
 
       {/* Floating decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-20 right-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 left-10 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
@@ -52,21 +87,15 @@ export default function LoginPage() {
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 mb-4">
               <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2">EventHub</h1>
-            <p className="text-white/60">{t('auth.login.subtitle')}</p>
+            <h1 className="text-4xl font-bold text-white mb-2">Inscription Client</h1>
+            <p className="text-white/60">Créez votre compte pour organiser vos événements</p>
           </div>
 
           {/* Card */}
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-semibold text-white">{t('auth.login.welcomeBack')}</h2>
-              <p className="text-white/60 mt-1">{t('auth.login.subtitle')}</p>
-            </div>
-
             {/* Error Message */}
             {error && (
               <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm backdrop-blur-sm">
@@ -78,6 +107,21 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="relative">
                 <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onFocus={() => setFocusedField('name')}
+                  onBlur={() => setFocusedField(null)}
+                  required
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
+                  placeholder={t('auth.register.name')}
+                />
+                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'name' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
+              </div>
+
+              <div className="relative">
+                <input
                   id="email"
                   type="email"
                   value={email}
@@ -85,10 +129,10 @@ export default function LoginPage() {
                   onFocus={() => setFocusedField('email')}
                   onBlur={() => setFocusedField(null)}
                   required
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
                   placeholder={t('auth.emailPlaceholder')}
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'email' ? 'bg-purple-500/10 ring-2 ring-purple-500/30' : ''}`} />
+                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'email' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
               <div className="relative">
@@ -100,26 +144,33 @@ export default function LoginPage() {
                   onFocus={() => setFocusedField('password')}
                   onBlur={() => setFocusedField(null)}
                   required
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
-                  placeholder="••••••••"
+                  minLength={8}
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
+                  placeholder={t('auth.register.password')}
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password' ? 'bg-purple-500/10 ring-2 ring-purple-500/30' : ''}`} />
+                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
-              <div className="flex items-center justify-between text-sm">
-                <label className="flex items-center cursor-pointer group">
-                  <input type="checkbox" className="w-4 h-4 rounded border-white/20 bg-white/5 text-purple-500 focus:ring-purple-400 focus:ring-offset-0" />
-                  <span className="ml-2 text-white/60 group-hover:text-white transition-colors">{t('auth.login.rememberMe')}</span>
-                </label>
-                <Link href="/forgot-password" className="text-purple-300 hover:text-purple-200 transition-colors">
-                  {t('auth.login.forgotPassword')}
-                </Link>
+              <div className="relative">
+                <input
+                  id="password_confirmation"
+                  type="password"
+                  value={passwordConfirmation}
+                  onChange={(e) => setPasswordConfirmation(e.target.value)}
+                  onFocus={() => setFocusedField('password_confirmation')}
+                  onBlur={() => setFocusedField(null)}
+                  required
+                  minLength={8}
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
+                  placeholder={t('auth.register.confirmPassword')}
+                />
+                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password_confirmation' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 px-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 focus:ring-4 focus:ring-purple-400/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full py-4 px-6 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 focus:ring-4 focus:ring-blue-400/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
@@ -130,9 +181,13 @@ export default function LoginPage() {
                     {t('loading')}
                   </span>
                 ) : (
-                  t('auth.login.button')
+                  t('auth.register.submit')
                 )}
               </button>
+
+              <p className="text-xs text-white/40 text-center">
+                En créant un compte, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité
+              </p>
             </form>
 
             {/* Divider */}
@@ -171,13 +226,20 @@ export default function LoginPage() {
               </button>
             </div>
 
-            {/* Sign Up Link */}
-            <p className="mt-8 text-center text-white/60">
-              {t('auth.login.noAccount')}{' '}
-              <Link href="/choose-role" className="text-purple-300 hover:text-purple-200 font-medium transition-colors">
-                {t('auth.register.title')}
-              </Link>
-            </p>
+            {/* Links */}
+            <div className="mt-8 space-y-3 text-center text-sm">
+              <p className="text-white/60">
+                {t('auth.register.haveAccount')}{' '}
+                <Link href="/login" className="text-blue-300 hover:text-blue-200 font-medium transition-colors">
+                  {t('auth.register.signIn')}
+                </Link>
+              </p>
+              <p className="text-white/60">
+                <Link href="/choose-role" className="text-blue-300 hover:text-blue-200 transition-colors">
+                  ← Changer de rôle
+                </Link>
+              </p>
+            </div>
           </div>
 
           {/* Footer */}

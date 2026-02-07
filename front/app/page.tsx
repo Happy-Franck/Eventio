@@ -1,18 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-<<<<<<< HEAD
 import { useTranslation } from '@/lib/i18n';
 import { LanguageSelector } from '@/components/LanguageSelector';
-
-export default function Home() {
-  const { t } = useTranslation();
-  
-=======
 import EventBackground from '@/components/EventBackground';
 import { useState } from 'react';
 
 export default function Home() {
+  const { t } = useTranslation();
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
 
   const features = [
@@ -48,7 +43,6 @@ export default function Home() {
     },
   ];
 
->>>>>>> 03a691a2d43bfe6c06cd45f5b7170db722d7ac84
   return (
     <div className="min-h-screen relative overflow-hidden">
       <EventBackground />
@@ -72,12 +66,8 @@ export default function Home() {
               </div>
               <h1 className="text-2xl font-bold text-white">EventHub</h1>
             </div>
-<<<<<<< HEAD
-            <div className="flex items-center space-x-4">
-              <LanguageSelector />
-=======
             <div className="flex items-center gap-4">
->>>>>>> 03a691a2d43bfe6c06cd45f5b7170db722d7ac84
+              <LanguageSelector />
               <Link
                 href="/login"
                 className="px-5 py-2.5 text-sm font-medium text-white/80 hover:text-white transition"
@@ -85,7 +75,7 @@ export default function Home() {
                 {t('auth.login.title')}
               </Link>
               <Link
-                href="/register"
+                href="/choose-role"
                 className="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
               >
                 {t('getStarted')}
@@ -98,40 +88,25 @@ export default function Home() {
       {/* Hero Section */}
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
         <div className="text-center">
-<<<<<<< HEAD
-          <h1 className="text-6xl font-bold text-gray-900 mb-6">
-            {t('welcome')}{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              EventIO
-=======
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8">
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
             <span className="text-sm text-white/80">Trusted by 10,000+ event organizers</span>
           </div>
 
           <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            Create{' '}
+            {t('welcome')}{' '}
             <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 bg-clip-text text-transparent">
-              Unforgettable
->>>>>>> 03a691a2d43bfe6c06cd45f5b7170db722d7ac84
+              EventIO
             </span>
-            <br />
-            Events
           </h1>
-<<<<<<< HEAD
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            {t('tagline')}
-=======
 
           <p className="text-xl text-white/60 mb-12 max-w-2xl mx-auto">
-            Your all-in-one platform for managing events, connecting with people,
-            and creating experiences that matter.
->>>>>>> 03a691a2d43bfe6c06cd45f5b7170db722d7ac84
+            {t('tagline')}
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              href="/register"
+              href="/choose-role"
               className="px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl hover:from-purple-600 hover:to-pink-600 transition shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98]"
             >
               {t('startFreeTrial')}
@@ -163,16 +138,8 @@ export default function Home() {
               </p>
               <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${feature.color}/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
             </div>
-<<<<<<< HEAD
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('features.easyPlanning.title')}</h3>
-            <p className="text-gray-600">
-              {t('features.easyPlanning.description')}
-            </p>
-          </div>
-=======
           ))}
         </div>
->>>>>>> 03a691a2d43bfe6c06cd45f5b7170db722d7ac84
 
         {/* Stats */}
         <div className="mt-32 grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -186,17 +153,9 @@ export default function Home() {
               <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stat.value}</div>
               <div className="text-white/60">{stat.label}</div>
             </div>
-<<<<<<< HEAD
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('features.connectPeople.title')}</h3>
-            <p className="text-gray-600">
-              {t('features.connectPeople.description')}
-            </p>
-          </div>
-=======
           ))}
         </div>
       </main>
->>>>>>> 03a691a2d43bfe6c06cd45f5b7170db722d7ac84
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/10 py-12">
@@ -210,14 +169,8 @@ export default function Home() {
               </div>
               <span className="text-white/80 font-semibold">EventHub</span>
             </div>
-<<<<<<< HEAD
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('features.trackSuccess.title')}</h3>
-            <p className="text-gray-600">
-              {t('features.trackSuccess.description')}
-=======
             <p className="text-white/40 text-sm">
               © 2024 EventHub. All rights reserved.
->>>>>>> 03a691a2d43bfe6c06cd45f5b7170db722d7ac84
             </p>
           </div>
         </div>
