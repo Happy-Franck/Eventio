@@ -1,5 +1,17 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+export interface Role {
+  id: number;
+  name: string;
+}
+
+export interface PrestationType {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+}
+
 export interface User {
   id: number;
   name: string;
@@ -7,6 +19,8 @@ export interface User {
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
+  roles: Role[];
+  prestation_types?: PrestationType[];
 }
 
 export interface AuthResponse {
@@ -51,29 +65,38 @@ class AuthAPI {
     const data = await response.json();
 
     if (!response.ok) {
-      // Log detailed error for debugging
-      console.error('API Error:', {
-        status: response.status,
-        endpoint,
-        data
-      });
-      
-      // Handle validation errors
-      if (response.status === 422 && data.errors) {
-        const errorMessages = Object.values(data.errors).flat().join(', ');
+      // Handle Laravel validation errors
+      if (data.errors) {
+        const errorMessages = Object.values(data.errors).flat().join(' ');
         throw new Error(errorMessages);
       }
-      
       throw new Error(data.message || 'An error occurred');
     }
 
     return data;
   }
 
-  async register(name: string, email: string, password: string, password_confirmation: string): Promise<AuthResponse> {
+  async register(
+    name: string, 
+    email: string, 
+    password: string, 
+    password_confirmation: string,
+    role?: 'client' | 'prestataire',
+    prestation_type_ids?: number[]
+  ): Promise<AuthResponse> {
+    const body: any = { name, email, password, password_confirmation };
+    
+    if (role) {
+      body.role = role;
+    }
+    
+    if (prestation_type_ids && prestation_type_ids.length > 0) {
+      body.prestation_type_ids = prestation_type_ids;
+    }
+
     const data = await this.request('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password, password_confirmation }),
+      body: JSON.stringify(body),
     });
 
     this.setToken(data.access_token);
@@ -150,13 +173,42 @@ class AuthAPI {
   getOAuthUrl(provider: 'google' | 'facebook'): string {
     return `${API_URL}/api/auth/${provider}`;
   }
+
+  async getPrestationTypes(): Promise<PrestationType[]> {
+    return this.request('/prestation-types');
+  }
+
+  getUserRole(user: User): string | null {
+    return user.roles && user.roles.length > 0 ? user.roles[0].name : null;
+  }
+
+  getDashboardPath(user: User): string {
+    const role = this.getUserRole(user);
+    
+    switch (role) {
+      case 'admin':
+        return '/dashboard/admin';
+      case 'prestataire':
+        return '/dashboard/prestataire';
+      case 'client':
+        return '/';
+      default:
+        return '/';
+    }
+  }
 }
 
 export const authAPI = new AuthAPI();
 
 // Export convenience functions
-export const register = (name: string, email: string, password: string, password_confirmation: string) => 
-  authAPI.register(name, email, password, password_confirmation);
+export const register = (
+  name: string, 
+  email: string, 
+  password: string, 
+  password_confirmation: string,
+  role?: 'client' | 'prestataire',
+  prestation_type_ids?: number[]
+) => authAPI.register(name, email, password, password_confirmation, role, prestation_type_ids);
 
 export const login = (email: string, password: string) => 
   authAPI.login(email, password);
