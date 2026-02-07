@@ -20,14 +20,22 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'nullable|string|in:client,prestataire',
-        ]);
+        ];
 
-        $result = $this->authService->register($request->only('name', 'email', 'password', 'role'));
+        // Si le rôle est prestataire, les types de prestation sont requis
+        if ($request->role === 'prestataire') {
+            $rules['prestation_type_ids'] = 'required|array|min:1';
+            $rules['prestation_type_ids.*'] = 'exists:prestation_types,id';
+        }
+
+        $request->validate($rules);
+
+        $result = $this->authService->register($request->only('name', 'email', 'password', 'role', 'prestation_type_ids'));
 
         return response()->json([
             'access_token' => $result['token'],
@@ -95,7 +103,7 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return response()->json($request->user()->load('roles'));
+        return response()->json($request->user()->load(['roles', 'prestationTypes']));
     }
 
     public function redirectToProvider($provider)
@@ -128,7 +136,7 @@ class AuthController extends Controller
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-                'user' => $user->load('roles'),
+                'user' => $user->load(['roles', 'prestationTypes']),
             ]);
         } catch (\Exception $e) {
             return response()->json([

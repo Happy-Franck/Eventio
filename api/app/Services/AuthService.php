@@ -22,10 +22,15 @@ class AuthService
         $role = $data['role'] ?? 'client';
         $user->assignRole($role);
 
+        // Si c'est un prestataire, attacher les types de prestation
+        if ($role === 'prestataire' && isset($data['prestation_type_ids'])) {
+            $user->prestationTypes()->attach($data['prestation_type_ids']);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
-            'user' => $user->load('roles'),
+            'user' => $user->load(['roles', 'prestationTypes']),
             'token' => $token,
         ];
     }
@@ -40,7 +45,7 @@ class AuthService
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
-            'user' => $user->load('roles'),
+            'user' => $user->load(['roles', 'prestationTypes']),
             'token' => $token,
         ];
     }

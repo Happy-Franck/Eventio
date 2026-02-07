@@ -15,8 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Créer les rôles et permissions
+        // Créer les rôles
         $this->call(RoleSeeder::class);
+
+        // Créer les types de prestation
+        $this->call(PrestationTypeSeeder::class);
 
         // User::factory(10)->create();
 
@@ -34,11 +37,26 @@ class DatabaseSeeder extends Seeder
         ]);
         $client->assignRole('client');
 
-        // Créer un utilisateur prestataire
-        $prestataire = User::factory()->create([
-            'name' => 'Prestataire User',
-            'email' => 'prestataire@example.com',
+        // Créer des utilisateurs prestataires avec différents types
+        $prestataire1 = User::factory()->create([
+            'name' => 'Photographe Pro',
+            'email' => 'photographe@example.com',
         ]);
-        $prestataire->assignRole('prestataire');
+        $prestataire1->assignRole('prestataire');
+        $prestataire1->prestationTypes()->attach([1]); // Photographe
+
+        $prestataire2 = User::factory()->create([
+            'name' => 'Traiteur Deluxe',
+            'email' => 'traiteur@example.com',
+        ]);
+        $prestataire2->assignRole('prestataire');
+        $prestataire2->prestationTypes()->attach([2]); // Traiteur
+
+        $prestataire3 = User::factory()->create([
+            'name' => 'Multi Services',
+            'email' => 'multi@example.com',
+        ]);
+        $prestataire3->assignRole('prestataire');
+        $prestataire3->prestationTypes()->attach([1, 5]); // Photographe + Vidéaste
     }
 }

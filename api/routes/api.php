@@ -2,7 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PrestationTypeController;
 use Illuminate\Support\Facades\Route;
+
+// Public routes - Types de prestation (accessible sans authentification)
+Route::get('/prestation-types', [PrestationTypeController::class, 'index']);
+Route::get('/prestation-types/{id}', [PrestationTypeController::class, 'show']);
 
 // Public routes - Authentication
 Route::prefix('auth')->group(function () {
