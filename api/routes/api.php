@@ -64,24 +64,78 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Routes protégées par rôle Admin
     Route::middleware('role:admin')->prefix('admin')->group(function () {
-        // Exemple: gestion des utilisateurs
-        // Route::get('/users', [AdminController::class, 'users']);
-        // Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+        // Prestation Types Management
+        Route::apiResource('prestation-types', \App\Http\Controllers\Api\Admin\PrestationTypeController::class);
+        
+        // Categories Management
+        Route::get('categories/tree', [\App\Http\Controllers\Api\Admin\CategoryController::class, 'tree']);
+        Route::apiResource('categories', \App\Http\Controllers\Api\Admin\CategoryController::class);
+        
+        // Clients Management
+        Route::post('clients/{client}/suspend', [\App\Http\Controllers\Api\Admin\ClientController::class, 'suspend']);
+        Route::post('clients/{client}/activate', [\App\Http\Controllers\Api\Admin\ClientController::class, 'activate']);
+        Route::apiResource('clients', \App\Http\Controllers\Api\Admin\ClientController::class)->only(['index', 'show', 'update', 'destroy']);
+        
+        // Providers Management
+        Route::post('providers/{provider}/approve', [\App\Http\Controllers\Api\Admin\ProviderController::class, 'approve']);
+        Route::post('providers/{provider}/reject', [\App\Http\Controllers\Api\Admin\ProviderController::class, 'reject']);
+        Route::get('providers/{provider}/services', [\App\Http\Controllers\Api\Admin\ProviderController::class, 'services']);
+        Route::apiResource('providers', \App\Http\Controllers\Api\Admin\ProviderController::class)->only(['index', 'show', 'update', 'destroy']);
     });
 
     // Routes protégées par rôle Prestataire
-    Route::middleware('role:prestataire')->prefix('prestataire')->group(function () {
-        // Exemple: gestion des événements
-        // Route::post('/events', [EventController::class, 'store']);
-        // Route::put('/events/{id}', [EventController::class, 'update']);
-        // Route::delete('/events/{id}', [EventController::class, 'destroy']);
+    Route::middleware('role:prestataire')->prefix('provider')->group(function () {
+        // Profile
+        Route::get('profile', [\App\Http\Controllers\Api\Provider\ProfileController::class, 'show']);
+        Route::put('profile', [\App\Http\Controllers\Api\Provider\ProfileController::class, 'update']);
+        Route::get('profile/statistics', [\App\Http\Controllers\Api\Provider\ProfileController::class, 'statistics']);
+        
+        // Services
+        Route::apiResource('services', \App\Http\Controllers\Api\Provider\ServiceController::class);
+        Route::post('services/{service}/toggle-availability', [\App\Http\Controllers\Api\Provider\ServiceController::class, 'toggleAvailability']);
+        
+        // Requests (Team Selections)
+        Route::get('requests', [\App\Http\Controllers\Api\Provider\RequestController::class, 'index']);
+        Route::get('requests/{selectionId}', [\App\Http\Controllers\Api\Provider\RequestController::class, 'show']);
+        Route::post('requests/{selectionId}/accept', [\App\Http\Controllers\Api\Provider\RequestController::class, 'accept']);
+        Route::post('requests/{selectionId}/reject', [\App\Http\Controllers\Api\Provider\RequestController::class, 'reject']);
+        Route::get('requests/pending/count', [\App\Http\Controllers\Api\Provider\RequestController::class, 'pendingCount']);
+        
+        // Statistics
+        Route::get('stats', [\App\Http\Controllers\Api\Provider\StatsController::class, 'index']);
+        Route::get('stats/monthly', [\App\Http\Controllers\Api\Provider\StatsController::class, 'monthly']);
     });
 
     // Routes protégées par rôle Client
     Route::middleware('role:client')->prefix('client')->group(function () {
-        // Exemple: réservations
-        // Route::post('/bookings', [BookingController::class, 'store']);
-        // Route::get('/bookings', [BookingController::class, 'index']);
+        // Providers - Consultation
+        Route::get('providers', [\App\Http\Controllers\Api\Client\ProviderController::class, 'index']);
+        Route::get('providers/{provider}', [\App\Http\Controllers\Api\Client\ProviderController::class, 'show']);
+        Route::get('providers/{provider}/services', [\App\Http\Controllers\Api\Client\ProviderController::class, 'services']);
+        Route::get('prestation-types/{prestationTypeId}/providers', [\App\Http\Controllers\Api\Client\ProviderController::class, 'byPrestationType']);
+        
+        // Comparison
+        Route::post('compare/providers', [\App\Http\Controllers\Api\Client\ComparisonController::class, 'compare']);
+        Route::get('compare/providers/{providerId1}/vs/{providerId2}', [\App\Http\Controllers\Api\Client\ComparisonController::class, 'compareTwo']);
+        
+        // Teams (Panier)
+        Route::apiResource('teams', \App\Http\Controllers\Api\Client\TeamController::class);
+        Route::post('teams/{team}/selections', [\App\Http\Controllers\Api\Client\TeamController::class, 'addSelection']);
+        Route::delete('teams/{team}/selections/{selection}', [\App\Http\Controllers\Api\Client\TeamController::class, 'removeSelection']);
+        Route::get('teams/{team}/total-estimate', [\App\Http\Controllers\Api\Client\TeamController::class, 'totalEstimate']);
+        
+        // Budgets
+        Route::apiResource('budgets', \App\Http\Controllers\Api\Client\BudgetController::class);
+        Route::post('budgets/{budget}/items', [\App\Http\Controllers\Api\Client\BudgetController::class, 'addItem']);
+        Route::put('budgets/{budget}/items/{item}', [\App\Http\Controllers\Api\Client\BudgetController::class, 'updateItem']);
+        Route::delete('budgets/{budget}/items/{item}', [\App\Http\Controllers\Api\Client\BudgetController::class, 'removeItem']);
+        Route::get('budgets/{budget}/summary', [\App\Http\Controllers\Api\Client\BudgetController::class, 'summary']);
+        
+        // Collections
+        Route::apiResource('collections', \App\Http\Controllers\Api\Client\CollectionController::class);
+        Route::post('collections/{collection}/items', [\App\Http\Controllers\Api\Client\CollectionController::class, 'addItem']);
+        Route::delete('collections/{collection}/items/{item}', [\App\Http\Controllers\Api\Client\CollectionController::class, 'removeItem']);
+        Route::get('categories/{categoryId}/collections', [\App\Http\Controllers\Api\Client\CollectionController::class, 'byCategory']);
     });
 
     // Routes accessibles par plusieurs rôles

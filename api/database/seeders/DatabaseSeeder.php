@@ -21,6 +21,9 @@ class DatabaseSeeder extends Seeder
         // Créer les types de prestation
         $this->call(PrestationTypeSeeder::class);
 
+        // Créer les catégories
+        $this->call(CategorySeeder::class);
+
         // User::factory(10)->create();
 
         // Créer un utilisateur admin

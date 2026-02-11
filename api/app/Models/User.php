@@ -10,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordNotification;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -38,6 +39,14 @@ class User extends Authenticatable
         'password',
         'provider',
         'provider_id',
+        'is_active',
+        'is_approved',
+        'phone',
+        'address',
+        'city',
+        'postal_code',
+        'bio',
+        'website',
     ];
 
     /**
@@ -60,6 +69,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'is_approved' => 'boolean',
         ];
     }
 
@@ -69,5 +80,53 @@ class User extends Authenticatable
     public function prestationTypes(): BelongsToMany
     {
         return $this->belongsToMany(PrestationType::class, 'user_prestation_types');
+    }
+
+    /**
+     * Get the provider services (for prestataires).
+     */
+    public function providerServices(): HasMany
+    {
+        return $this->hasMany(ProviderService::class);
+    }
+
+    /**
+     * Get the budgets (for clients).
+     */
+    public function budgets(): HasMany
+    {
+        return $this->hasMany(Budget::class);
+    }
+
+    /**
+     * Get the teams (for clients).
+     */
+    public function teams(): HasMany
+    {
+        return $this->hasMany(Team::class);
+    }
+
+    /**
+     * Get the collections (for clients).
+     */
+    public function collections(): HasMany
+    {
+        return $this->hasMany(Collection::class);
+    }
+
+    /**
+     * Get team selections where this user is the provider.
+     */
+    public function teamSelections(): HasMany
+    {
+        return $this->hasMany(TeamSelection::class, 'provider_id');
+    }
+
+    /**
+     * Get collection items where this user is the provider.
+     */
+    public function collectionItems(): HasMany
+    {
+        return $this->hasMany(CollectionItem::class, 'provider_id');
     }
 }

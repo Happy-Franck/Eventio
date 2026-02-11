@@ -14,6 +14,17 @@ class PrestationType extends Model
         'name',
         'slug',
         'description',
+        'icon',
+        'is_active',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     /**
