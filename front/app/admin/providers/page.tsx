@@ -13,9 +13,7 @@ export default function ProvidersPage() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
-  const [showServicesModal, setShowServicesModal] = useState(false);
-  const [services, setServices] = useState<any[]>([]);
+  const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
 
   useEffect(() => {
     fetchProviders();
@@ -62,21 +60,23 @@ export default function ProvidersPage() {
     }
   };
 
-  const viewServices = async (provider: Provider) => {
-    try {
-      const response = await axios.get(`/admin/providers/${provider.id}/services`);
-      setServices(response.data.data);
-      setSelectedProvider(provider);
-      setShowServicesModal(true);
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Error fetching services');
+  const filteredProviders = providers.filter(provider => {
+    // Filter by search term
+    const matchesSearch = provider.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      provider.email.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Filter by status
+    let matchesStatus = true;
+    if (filterStatus === 'pending') {
+      matchesStatus = !provider.is_approved && !!provider.is_active;
+    } else if (filterStatus === 'approved') {
+      matchesStatus = !!provider.is_approved && !!provider.is_active;
+    } else if (filterStatus === 'rejected') {
+      matchesStatus = !provider.is_active;
     }
-  };
-
-  const filteredProviders = providers.filter(provider =>
-    provider.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    provider.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const pendingProviders = providers.filter(p => !p.is_approved && p.is_active);
   const approvedProviders = providers.filter(p => p.is_approved && p.is_active);
@@ -159,8 +159,53 @@ export default function ProvidersPage() {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-800 shadow-sm">
+      {/* Search and Filters */}
+      <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
+        {/* Filter Buttons */}
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          <button
+            onClick={() => setFilterStatus('all')}
+            className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
+              filterStatus === 'all'
+                ? 'bg-orange-500 text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+            }`}
+          >
+            All ({providers.length})
+          </button>
+          <button
+            onClick={() => setFilterStatus('pending')}
+            className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
+              filterStatus === 'pending'
+                ? 'bg-yellow-500 text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+            }`}
+          >
+            Pending ({pendingProviders.length})
+          </button>
+          <button
+            onClick={() => setFilterStatus('approved')}
+            className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
+              filterStatus === 'approved'
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+            }`}
+          >
+            Approved ({approvedProviders.length})
+          </button>
+          <button
+            onClick={() => setFilterStatus('rejected')}
+            className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
+              filterStatus === 'rejected'
+                ? 'bg-red-500 text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+            }`}
+          >
+            Rejected ({rejectedProviders.length})
+          </button>
+        </div>
+        
+        {/* Search Bar */}
         <div className="relative">
           <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -180,7 +225,8 @@ export default function ProvidersPage() {
         {filteredProviders.map((provider) => (
           <div
             key={provider.id}
-            className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-lg transition"
+            className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-lg transition cursor-pointer"
+            onClick={() => window.location.href = `/admin/providers/${provider.id}`}
           >
             <div className="flex items-start gap-4 mb-4">
               <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
@@ -224,13 +270,19 @@ export default function ProvidersPage() {
               {!provider.is_approved && provider.is_active && (
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleApprove(provider.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleApprove(provider.id);
+                    }}
                     className="flex-1 px-4 py-2 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 font-medium rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition text-sm"
                   >
                     Approve
                   </button>
                   <button
-                    onClick={() => handleReject(provider.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleReject(provider.id);
+                    }}
                     className="flex-1 px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition text-sm"
                   >
                     Reject
@@ -238,19 +290,12 @@ export default function ProvidersPage() {
                 </div>
               )}
               
-              {/* View services button for approved providers */}
-              {provider.is_approved && provider.is_active && (
-                <button
-                  onClick={() => viewServices(provider)}
-                  className="w-full px-4 py-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 font-medium rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition text-sm"
-                >
-                  View Services
-                </button>
-              )}
-              
               {/* Delete button - always visible */}
               <button
-                onClick={() => handleDelete(provider.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(provider.id);
+                }}
                 className="w-full px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition text-sm flex items-center justify-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -269,84 +314,6 @@ export default function ProvidersPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
           <p className="text-gray-600 dark:text-gray-400">No providers found</p>
-        </div>
-      )}
-
-      {/* Services Modal */}
-      {showServicesModal && selectedProvider && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {selectedProvider.name}'s Services
-                </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{services.length} services</p>
-              </div>
-              <button
-                onClick={() => {
-                  setShowServicesModal(false);
-                  setSelectedProvider(null);
-                  setServices([]);
-                }}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
-              >
-                <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="p-6">
-              {services.length === 0 ? (
-                <div className="text-center py-12">
-                  <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                  </svg>
-                  <p className="text-gray-600 dark:text-gray-400">No services yet</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {services.map((service: any) => (
-                    <div
-                      key={service.id}
-                      className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">{service.name}</h3>
-                        <span
-                          className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                            service.is_available
-                              ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                              : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-400'
-                          }`}
-                        >
-                          {service.is_available ? 'Available' : 'Unavailable'}
-                        </span>
-                      </div>
-                      {service.description && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{service.description}</p>
-                      )}
-                      <div className="flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <span className="text-gray-600 dark:text-gray-400">Price:</span>
-                          <span className="font-bold text-gray-900 dark:text-white">
-                            ${service.price_min} - ${service.price_max}
-                          </span>
-                        </div>
-                        {service.prestation_type && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-600 dark:text-gray-400">Type:</span>
-                            <span className="text-gray-900 dark:text-white">{service.prestation_type.name}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
         </div>
       )}
     </div>

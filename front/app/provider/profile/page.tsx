@@ -11,12 +11,17 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    username: '',
+    first_name: '',
+    last_name: '',
     phone: '',
     address: '',
     city: '',
     postal_code: '',
     bio: '',
     website: '',
+    business_type: 'individual' as 'individual' | 'company',
+    company_name: '',
   });
 
   useEffect(() => {
@@ -30,12 +35,17 @@ export default function ProfilePage() {
       setFormData({
         name: response.data.name || '',
         email: response.data.email || '',
+        username: response.data.username || '',
+        first_name: response.data.first_name || '',
+        last_name: response.data.last_name || '',
         phone: response.data.phone || '',
         address: response.data.address || '',
         city: response.data.city || '',
         postal_code: response.data.postal_code || '',
         bio: response.data.bio || '',
         website: response.data.website || '',
+        business_type: response.data.business_type || 'individual',
+        company_name: response.data.company_name || '',
       });
     } catch (error) {
       console.error('Failed to fetch profile:', error);
@@ -79,6 +89,62 @@ export default function ProfilePage() {
           <h2 className="text-xl font-bold text-white mb-6">Basic Information</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-white/80 mb-2">
+                Type d'activité *
+              </label>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, business_type: 'individual' })}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    formData.business_type === 'individual'
+                      ? 'border-purple-500 bg-purple-500/20'
+                      : 'border-white/10 bg-white/5 hover:border-white/20'
+                  }`}
+                >
+                  <div className="text-white font-medium">Entrepreneur individuel</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, business_type: 'company' })}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    formData.business_type === 'company'
+                      ? 'border-purple-500 bg-purple-500/20'
+                      : 'border-white/10 bg-white/5 hover:border-white/20'
+                  }`}
+                >
+                  <div className="text-white font-medium">Société</div>
+                </button>
+              </div>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-white/80 mb-2">
+                Nom de l'entreprise *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.company_name}
+                onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-white/80 mb-2">
+                Nom d'utilisateur
+              </label>
+              <input
+                type="text"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500"
+                placeholder="Affiché sur la plateforme"
+              />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-white/80 mb-2">
                 Full Name *
@@ -88,6 +154,30 @@ export default function ProfilePage() {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-white/80 mb-2">
+                Prénom
+              </label>
+              <input
+                type="text"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-white/80 mb-2">
+                Nom
+              </label>
+              <input
+                type="text"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
                 className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500"
               />
             </div>
