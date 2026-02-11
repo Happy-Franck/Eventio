@@ -116,8 +116,25 @@ export default function VerifyOTPPage() {
       if (completeResponse.ok) {
         // Store the token
         localStorage.setItem('auth_token', completeData.access_token);
-        // Redirect to dashboard
-        router.push('/dashboard');
+        
+        // Get user info to determine role-based redirect
+        const user = completeData.user;
+        const role = user?.roles?.[0]?.name;
+        
+        // Redirect based on role
+        switch (role) {
+          case 'admin':
+            router.push('/admin/dashboard');
+            break;
+          case 'prestataire':
+            router.push('/provider/dashboard');
+            break;
+          case 'client':
+            router.push('/client/dashboard');
+            break;
+          default:
+            router.push('/dashboard');
+        }
       } else {
         setError(completeData.message || 'Registration failed');
         setLoading(false);

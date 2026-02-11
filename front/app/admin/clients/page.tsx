@@ -43,6 +43,16 @@ export default function ClientsPage() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to permanently delete this client? This action cannot be undone.')) return;
+    try {
+      await axios.delete(`/admin/clients/${id}`);
+      fetchClients();
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Error deleting client');
+    }
+  };
+
   const filteredClients = clients.filter(client =>
     client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -164,27 +174,45 @@ export default function ClientsPage() {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Member since</span>
                 <span className="text-gray-900 dark:text-white font-medium">
-                  {new Date(client.created_at).toLocaleDateString()}
+                  {client.created_at ? new Date(client.created_at).toLocaleDateString() : 'N/A'}
                 </span>
               </div>
             </div>
 
-            <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-800">
+            <div className="space-y-2 pt-4 border-t border-gray-200 dark:border-gray-800">
+              {/* Suspend/Activate button */}
               {client.is_active ? (
                 <button
                   onClick={() => handleSuspend(client.id)}
-                  className="flex-1 px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition"
+                  className="w-full px-4 py-2 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 font-medium rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30 transition flex items-center justify-center gap-2"
                 >
-                  Suspend
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                  </svg>
+                  Suspend Account
                 </button>
               ) : (
                 <button
                   onClick={() => handleActivate(client.id)}
-                  className="flex-1 px-4 py-2 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 font-medium rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition"
+                  className="w-full px-4 py-2 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 font-medium rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition flex items-center justify-center gap-2"
                 >
-                  Activate
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Activate Account
                 </button>
               )}
+              
+              {/* Delete button */}
+              <button
+                onClick={() => handleDelete(client.id)}
+                className="w-full px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Delete Account
+              </button>
             </div>
           </div>
         ))}

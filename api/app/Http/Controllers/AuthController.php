@@ -25,17 +25,32 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'nullable|string|in:client,prestataire',
+            
+            // Champs communs
+            'username' => 'nullable|string|max:255|unique:users',
+            'first_name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'postal_code' => 'nullable|string|max:20',
         ];
 
         // Si le rôle est prestataire, les types de prestation sont requis
         if ($request->role === 'prestataire') {
             $rules['prestation_type_ids'] = 'required|array|min:1';
             $rules['prestation_type_ids.*'] = 'exists:prestation_types,id';
+            $rules['business_type'] = 'nullable|string|in:individual,company';
+            $rules['company_name'] = 'nullable|string|max:255';
         }
 
         $request->validate($rules);
 
-        $result = $this->authService->register($request->only('name', 'email', 'password', 'role', 'prestation_type_ids'));
+        $result = $this->authService->register($request->only([
+            'name', 'email', 'password', 'role', 'prestation_type_ids',
+            'username', 'first_name', 'last_name', 'phone', 'address', 'city', 'postal_code',
+            'business_type', 'company_name'
+        ]));
 
         return response()->json([
             'message' => 'Verification code sent to your email. Please verify to complete registration.',

@@ -10,13 +10,30 @@ import EventBackground from '@/components/EventBackground';
 export default function RegisterClientPage() {
   const router = useRouter();
   const { t } = useTranslation();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    username: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    city: '',
+    address: '',
+    password: '',
+    password_confirmation: '',
+  });
+  
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,10 +49,8 @@ export default function RegisterClientPage() {
         },
         credentials: 'include',
         body: JSON.stringify({ 
-          name, 
-          email, 
-          password, 
-          password_confirmation: passwordConfirmation,
+          ...formData,
+          name: `${formData.first_name} ${formData.last_name}`.trim() || formData.username,
           role: 'client'
         }),
       });
@@ -43,11 +58,10 @@ export default function RegisterClientPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Redirect to OTP verification page
         const params = new URLSearchParams({
-          email: email,
-          name: name,
-          password: password,
+          email: formData.email,
+          name: `${formData.first_name} ${formData.last_name}`.trim() || formData.username,
+          password: formData.password,
           role: 'client',
         });
         router.push(`/verify-otp?${params.toString()}`);
@@ -74,16 +88,13 @@ export default function RegisterClientPage() {
     <div className="min-h-screen relative overflow-hidden">
       <EventBackground />
 
-      {/* Floating decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 right-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 left-10 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">
-          {/* Logo/Brand */}
+        <div className="w-full max-w-2xl">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 mb-4">
               <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -94,75 +105,154 @@ export default function RegisterClientPage() {
             <p className="text-white/60">Créez votre compte pour organiser vos événements</p>
           </div>
 
-          {/* Card */}
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
-            {/* Error Message */}
             {error && (
               <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm backdrop-blur-sm">
                 {error}
               </div>
             )}
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Username */}
               <div className="relative">
                 <input
-                  id="name"
+                  name="username"
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  onFocus={() => setFocusedField('name')}
+                  value={formData.username}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('username')}
                   onBlur={() => setFocusedField(null)}
                   required
                   className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder={t('auth.register.name')}
+                  placeholder="Nom d'utilisateur (affiché sur la plateforme) *"
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'name' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
+                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'username' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
+              {/* First Name & Last Name */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative">
+                  <input
+                    name="first_name"
+                    type="text"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('first_name')}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
+                    placeholder="Prénom *"
+                  />
+                  <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'first_name' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
+                </div>
+
+                <div className="relative">
+                  <input
+                    name="last_name"
+                    type="text"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('last_name')}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
+                    placeholder="Nom *"
+                  />
+                  <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'last_name' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
+                </div>
+              </div>
+
+              {/* Email */}
               <div className="relative">
                 <input
-                  id="email"
+                  name="email"
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  onChange={handleChange}
                   onFocus={() => setFocusedField('email')}
                   onBlur={() => setFocusedField(null)}
                   required
                   className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder={t('auth.emailPlaceholder')}
+                  placeholder="Email *"
                 />
                 <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'email' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
+              {/* Phone */}
               <div className="relative">
                 <input
-                  id="password"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('phone')}
+                  onBlur={() => setFocusedField(null)}
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
+                  placeholder="Numéro de téléphone"
+                />
+                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'phone' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
+              </div>
+
+              {/* City */}
+              <div className="relative">
+                <input
+                  name="city"
+                  type="text"
+                  value={formData.city}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('city')}
+                  onBlur={() => setFocusedField(null)}
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
+                  placeholder="Ville"
+                />
+                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'city' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
+              </div>
+
+              {/* Address */}
+              <div className="relative">
+                <input
+                  name="address"
+                  type="text"
+                  value={formData.address}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('address')}
+                  onBlur={() => setFocusedField(null)}
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
+                  placeholder="Adresse"
+                />
+                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'address' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
+              </div>
+
+              {/* Password */}
+              <div className="relative">
+                <input
+                  name="password"
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={handleChange}
                   onFocus={() => setFocusedField('password')}
                   onBlur={() => setFocusedField(null)}
                   required
                   minLength={8}
                   className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder={t('auth.register.password')}
+                  placeholder="Mot de passe *"
                 />
                 <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
+              {/* Password Confirmation */}
               <div className="relative">
                 <input
-                  id="password_confirmation"
+                  name="password_confirmation"
                   type="password"
-                  value={passwordConfirmation}
-                  onChange={(e) => setPasswordConfirmation(e.target.value)}
+                  value={formData.password_confirmation}
+                  onChange={handleChange}
                   onFocus={() => setFocusedField('password_confirmation')}
                   onBlur={() => setFocusedField(null)}
                   required
                   minLength={8}
                   className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder={t('auth.register.confirmPassword')}
+                  placeholder="Confirmer le mot de passe *"
                 />
                 <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password_confirmation' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
@@ -190,7 +280,6 @@ export default function RegisterClientPage() {
               </p>
             </form>
 
-            {/* Divider */}
             <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-white/10" />
@@ -200,7 +289,6 @@ export default function RegisterClientPage() {
               </div>
             </div>
 
-            {/* OAuth Buttons */}
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => handleOAuth('google')}
@@ -226,7 +314,6 @@ export default function RegisterClientPage() {
               </button>
             </div>
 
-            {/* Links */}
             <div className="mt-8 space-y-3 text-center text-sm">
               <p className="text-white/60">
                 {t('auth.register.haveAccount')}{' '}
@@ -242,7 +329,6 @@ export default function RegisterClientPage() {
             </div>
           </div>
 
-          {/* Footer */}
           <p className="mt-8 text-center text-white/40 text-sm">
             © 2024 EventHub. All rights reserved.
           </p>

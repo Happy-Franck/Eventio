@@ -24,8 +24,26 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/admin/stats');
-      setStats(response.data);
+      // Fetch data from existing endpoints
+      const [prestationTypesRes, categoriesRes, clientsRes, providersRes] = await Promise.all([
+        axios.get('/admin/prestation-types'),
+        axios.get('/admin/categories'),
+        axios.get('/admin/clients'),
+        axios.get('/admin/providers'),
+      ]);
+
+      const clients = clientsRes.data.data || [];
+      const providers = providersRes.data.data || [];
+      const pendingProviders = providers.filter((p: any) => !p.is_approved && p.is_active);
+
+      setStats({
+        total_users: clients.length + providers.length,
+        total_clients: clients.length,
+        total_providers: providers.length,
+        total_prestation_types: prestationTypesRes.data.data?.length || 0,
+        total_categories: categoriesRes.data.data?.length || 0,
+        pending_approvals: pendingProviders.length,
+      });
     } catch (error) {
       console.error('Failed to fetch stats:', error);
     } finally {

@@ -5,14 +5,21 @@ export interface User {
   email: string;
   roles: string[];
   prestation_types?: PrestationType[];
+  username?: string;
+  first_name?: string;
+  last_name?: string;
   phone?: string;
   address?: string;
   city?: string;
   postal_code?: string;
   bio?: string;
   website?: string;
+  business_type?: 'individual' | 'company';
+  company_name?: string;
   is_active?: boolean;
   is_approved?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface PrestationType {

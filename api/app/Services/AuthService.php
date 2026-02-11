@@ -22,7 +22,7 @@ class AuthService
      * the user account yet. The account will be created after OTP verification
      * in completeRegistration().
      * 
-     * @param array $data Registration data (name, email, password)
+     * @param array $data Registration data (name, email, password, role, prestation_type_ids)
      * @return array Registration status with email and OTP sent flag
      * @throws \Exception If OTP sending fails
      */
@@ -34,6 +34,27 @@ class AuthService
         if (!$otpResult->success) {
             throw new \Exception($otpResult->message);
         }
+
+        // Store registration data in cache for later use (expires in 15 minutes)
+        \Illuminate\Support\Facades\Cache::put(
+            'registration_data_' . $data['email'],
+            [
+                'name' => $data['name'],
+                'password' => $data['password'],
+                'role' => $data['role'] ?? 'client',
+                'prestation_type_ids' => $data['prestation_type_ids'] ?? null,
+                'username' => $data['username'] ?? null,
+                'first_name' => $data['first_name'] ?? null,
+                'last_name' => $data['last_name'] ?? null,
+                'phone' => $data['phone'] ?? null,
+                'address' => $data['address'] ?? null,
+                'city' => $data['city'] ?? null,
+                'postal_code' => $data['postal_code'] ?? null,
+                'business_type' => $data['business_type'] ?? null,
+                'company_name' => $data['company_name'] ?? null,
+            ],
+            now()->addMinutes(15)
+        );
 
         // Return success - the user will be created after OTP verification
         return [
@@ -57,22 +78,37 @@ class AuthService
      */
     public function completeRegistration(string $email, string $name, string $password): array
     {
+        // Retrieve stored registration data from cache
+        $registrationData = \Illuminate\Support\Facades\Cache::get('registration_data_' . $email);
+        
         // Create the user after OTP verification
         $user = User::create([
             'name' => $name,
             'email' => $email,
             'password' => Hash::make($password),
             'email_verified_at' => now(), // Email is already verified via OTP
+            'username' => $registrationData['username'] ?? null,
+            'first_name' => $registrationData['first_name'] ?? null,
+            'last_name' => $registrationData['last_name'] ?? null,
+            'phone' => $registrationData['phone'] ?? null,
+            'address' => $registrationData['address'] ?? null,
+            'city' => $registrationData['city'] ?? null,
+            'postal_code' => $registrationData['postal_code'] ?? null,
+            'business_type' => $registrationData['business_type'] ?? null,
+            'company_name' => $registrationData['company_name'] ?? null,
         ]);
 
-        // Assigner le rôle par défaut (client)
-        $role = $data['role'] ?? 'client';
+        // Assigner le rôle (use cached data if available, otherwise default to client)
+        $role = $registrationData['role'] ?? 'client';
         $user->assignRole($role);
 
         // Si c'est un prestataire, attacher les types de prestation
-        if ($role === 'prestataire' && isset($data['prestation_type_ids'])) {
-            $user->prestationTypes()->attach($data['prestation_type_ids']);
+        if ($role === 'prestataire' && isset($registrationData['prestation_type_ids'])) {
+            $user->prestationTypes()->attach($registrationData['prestation_type_ids']);
         }
+
+        // Clear the cached registration data
+        \Illuminate\Support\Facades\Cache::forget('registration_data_' . $email);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

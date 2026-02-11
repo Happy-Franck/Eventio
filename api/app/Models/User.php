@@ -47,6 +47,11 @@ class User extends Authenticatable
         'postal_code',
         'bio',
         'website',
+        'username',
+        'first_name',
+        'last_name',
+        'business_type',
+        'company_name',
     ];
 
     /**

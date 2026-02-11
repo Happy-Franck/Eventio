@@ -52,6 +52,16 @@ export default function ProvidersPage() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to permanently delete this provider? This action cannot be undone.')) return;
+    try {
+      await axios.delete(`/admin/providers/${id}`);
+      fetchProviders();
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Error deleting provider');
+    }
+  };
+
   const viewServices = async (provider: Provider) => {
     try {
       const response = await axios.get(`/admin/providers/${provider.id}/services`);
@@ -209,9 +219,10 @@ export default function ProvidersPage() {
               )}
             </div>
 
-            <div className="flex gap-2 pt-4 border-t border-gray-200 dark:border-gray-800">
+            <div className="space-y-2 pt-4 border-t border-gray-200 dark:border-gray-800">
+              {/* Approval buttons for pending providers */}
               {!provider.is_approved && provider.is_active && (
-                <>
+                <div className="flex gap-2">
                   <button
                     onClick={() => handleApprove(provider.id)}
                     className="flex-1 px-4 py-2 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 font-medium rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition text-sm"
@@ -224,16 +235,29 @@ export default function ProvidersPage() {
                   >
                     Reject
                   </button>
-                </>
+                </div>
               )}
+              
+              {/* View services button for approved providers */}
               {provider.is_approved && provider.is_active && (
                 <button
                   onClick={() => viewServices(provider)}
-                  className="flex-1 px-4 py-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 font-medium rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition text-sm"
+                  className="w-full px-4 py-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 font-medium rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition text-sm"
                 >
                   View Services
                 </button>
               )}
+              
+              {/* Delete button - always visible */}
+              <button
+                onClick={() => handleDelete(provider.id)}
+                className="w-full px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition text-sm flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Delete Account
+              </button>
             </div>
           </div>
         ))}
