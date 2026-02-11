@@ -47,6 +47,7 @@ export interface ProviderService {
   id: number;
   user_id: number;
   prestation_type_id: number;
+  name?: string;
   price_min?: number;
   price_max?: number;
   price_range?: string;
