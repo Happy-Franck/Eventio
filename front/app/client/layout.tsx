@@ -53,6 +53,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     { href: '/client/teams', label: 'My Teams', icon: 'users' },
     { href: '/client/budgets', label: 'Budgets', icon: 'dollar' },
     { href: '/client/collections', label: 'Collections', icon: 'heart' },
+    { href: '/client/compare', label: 'Compare', icon: 'chart' },
   ];
 
   return (

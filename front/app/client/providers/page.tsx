@@ -11,6 +11,9 @@ export default function ProvidersPage() {
   const [prestationTypes, setPrestationTypes] = useState<PrestationType[]>([]);
   const [loading, setLoading] = useState(true);
   const [addingToTeam, setAddingToTeam] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [filters, setFilters] = useState({
     search: '',
     prestation_type_id: '',
@@ -22,11 +25,12 @@ export default function ProvidersPage() {
   useEffect(() => {
     fetchPrestationTypes();
     fetchProviders();
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     // Auto-search when filters change (except on initial load)
     const timeoutId = setTimeout(() => {
+      setCurrentPage(1); // Reset to page 1 when filters change
       fetchProviders();
     }, 300); // Debounce de 300ms
 
@@ -49,9 +53,13 @@ export default function ProvidersPage() {
       Object.entries(filters).forEach(([key, value]) => {
         if (value) params.append(key, value);
       });
+      params.append('page', currentPage.toString());
+      params.append('per_page', '15');
 
       const response = await axios.get(`/client/providers?${params}`);
       setProviders(response.data.data);
+      setTotal(response.data.meta?.total || response.data.data.length);
+      setTotalPages(response.data.meta?.last_page || 1);
     } catch (error) {
       console.error('Failed to fetch providers:', error);
     } finally {
@@ -183,8 +191,15 @@ export default function ProvidersPage() {
           <p className="text-white/60">No providers found. Try adjusting your filters.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {providers.map((provider) => (
+        <>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-white/60 text-sm">
+              Showing {providers.length} of {total} providers
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {providers.map((provider) => (
             <div
               key={provider.id}
               className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition group"
@@ -248,6 +263,31 @@ export default function ProvidersPage() {
             </div>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between mt-8 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+            <div className="text-sm text-white/60">
+              Page {currentPage} of {totalPages}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+      </>
       )}
     </div>
   );
