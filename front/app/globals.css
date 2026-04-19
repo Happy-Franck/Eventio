@@ -1,22 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #0f0c29;
-  --foreground: #ffffff;
+  /* EventIO Color Palette */
+  --navy: #1a3a5c;
+  --blue: #4a6fa5;
+  --dusty: #6b8db8;
+  --light: #a8c0d8;
+  --pale: #dce8f2;
+  --cream: #f5f0ea;
+  --offwhite: #faf8f5;
+  --gold: #c9a96e;
+
+  /* Base Colors */
+  --background: #faf8f5;
+  --foreground: #1a3a5c;
+
+  /* Accent Colors */
+  --accent-primary: #4a6fa5;
+  --accent-secondary: #6b8db8;
+  --accent-tertiary: #a8c0d8;
+
+  /* Gradients */
+  --grad-primary: linear-gradient(135deg, #1a3a5c, #4a6fa5);
+  --grad-secondary: linear-gradient(160deg, #1a3a5c 0%, #2d5a8e 60%, #4a6fa5 100%);
+  --grad-light: linear-gradient(135deg, #4a6fa5, #6b8db8);
+
+  /* Glass Effects */
+  --glass-bg: rgba(255,255,255,0.08);
+  --glass-border: rgba(255,255,255,0.15);
+  --glass-bg-light: rgba(26,58,92,0.08);
+  --glass-border-light: rgba(26,58,92,0.15);
+
+  /* Text Colors */
+  --text-primary: #1a3a5c;
+  --text-secondary: rgba(26,58,92,0.8);
+  --text-muted: rgba(26,58,92,0.6);
+  --text-light: rgba(26,58,92,0.4);
+  
+  --text-dark-primary: rgba(255,255,255,1.0);
+  --text-dark-secondary: rgba(255,255,255,0.9);
+  --text-dark-muted: rgba(255,255,255,0.7);
+  --text-dark-light: rgba(255,255,255,0.5);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: 'Montserrat', var(--font-geist-sans);
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-cursive: 'Great Vibes', cursive;
   --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
 }
+
+/* EventIO Typography Classes */
+.font-serif {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.font-cursive {
+  font-family: 'Great Vibes', cursive;
+}
+
+.text-navy { color: var(--navy); }
+.text-blue { color: var(--blue); }
+.text-dusty { color: var(--dusty); }
+.text-light { color: var(--light); }
+.text-pale { color: var(--pale); }
+.text-gold { color: var(--gold); }
+
+.bg-navy { background-color: var(--navy); }
+.bg-blue { background-color: var(--blue); }
+.bg-dusty { background-color: var(--dusty); }
+.bg-light { background-color: var(--light); }
+.bg-pale { background-color: var(--pale); }
+.bg-cream { background-color: var(--cream); }
+.bg-offwhite { background-color: var(--offwhite); }
+.bg-gold { background-color: var(--gold); }
+
+.border-navy { border-color: var(--navy); }
+.border-blue { border-color: var(--blue); }
+.border-dusty { border-color: var(--dusty); }
+.border-light { border-color: var(--light); }
+.border-pale { border-color: var(--pale); }
+
+/* EventIO Gradient Classes */
+.bg-grad-primary { background: var(--grad-primary); }
+.bg-grad-secondary { background: var(--grad-secondary); }
+.bg-grad-light { background: var(--grad-light); }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
@@ -24,16 +107,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(74, 111, 165, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(74, 111, 165, 0.4);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(74, 111, 165, 0.6);
 }
 
 /* Smooth animations */
@@ -41,23 +124,168 @@ body {
   animation-duration: 0.3s;
 }
 
-/* Gradient text utility */
-.gradient-text {
-  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+/* EventIO Button System */
+.btn-eventio {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  transform: scale(1);
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.025em;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-eventio-primary {
+  background: var(--grad-primary);
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(26, 58, 92, 0.3);
+}
+
+.btn-eventio-primary:hover {
+  background: var(--grad-light);
+  box-shadow: 0 20px 25px -5px rgba(26, 58, 92, 0.4);
+  transform: scale(1.02);
+}
+
+.btn-eventio-secondary {
+  background: var(--pale);
+  color: var(--navy);
+  border: 1px solid var(--light);
+}
+
+.btn-eventio-secondary:hover {
+  background: var(--light);
+  border-color: var(--blue);
+}
+
+.btn-eventio-ghost {
+  background: transparent;
+  color: var(--navy);
+  border: 1px solid var(--pale);
+}
+
+.btn-eventio-ghost:hover {
+  background: var(--pale);
+  border-color: var(--light);
+}
+
+.btn-eventio-dark {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  color: white;
+}
+
+.btn-eventio-dark:hover {
+  background: rgba(255, 255, 255, 0.20);
+  border-color: rgba(255, 255, 255, 0.30);
+}
+
+/* EventIO Input System */
+.input-eventio {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid var(--pale);
+}
+
+.input-eventio-light {
+  background: white;
+  color: var(--navy);
+  border-color: var(--pale);
+}
+
+.input-eventio-light::placeholder {
+  color: var(--dusty);
+}
+
+.input-eventio-light:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.20);
+}
+
+.input-eventio-dark {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.input-eventio-dark::placeholder {
+  color: rgba(255, 255, 255, 0.50);
+}
+
+.input-eventio-dark:focus {
+  outline: none;
+  border-color: var(--light);
+  box-shadow: 0 0 0 2px rgba(168, 192, 216, 0.25);
+}
+
+/* EventIO Card System */
+.card-eventio {
+  background: white;
+  border: 1px solid var(--pale);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(26, 58, 92, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card-eventio:hover {
+  box-shadow: 0 20px 25px -5px rgba(26, 58, 92, 0.15);
+  transform: translateY(-2px);
+}
+
+.card-eventio-glass {
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border-light);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(26, 58, 92, 0.25);
+}
+
+.card-eventio-dark {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+}
+
+/* EventIO Gradient Text */
+.gradient-text-eventio {
+  background: var(--grad-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Glass effect */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+/* EventIO Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Floating animation */
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -71,10 +299,9 @@ body {
   animation: float 3s ease-in-out infinite;
 }
 
-/* Pulse glow animation */
 @keyframes pulse-glow {
   0%, 100% {
-    opacity: 0.5;
+    opacity: 0.6;
   }
   50% {
     opacity: 1;
@@ -83,4 +310,188 @@ body {
 
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* EventIO Specific Components */
+.polaroid-eventio {
+  background: white;
+  padding: 12px 12px 42px;
+  box-shadow: 0 12px 40px rgba(26,58,92,0.18), 0 2px 8px rgba(0,0,0,0.08);
+  cursor: default;
+  transition: transform 400ms ease;
+}
+
+.polaroid-eventio:hover {
+  transform: rotate(0deg) scale(1.04) !important;
+  z-index: 10;
+}
+
+.service-card-eventio {
+  padding: 2.25rem 1.75rem;
+  border-top: 1px solid var(--pale);
+  transition: border-color 300ms;
+  cursor: default;
+}
+
+.service-card-eventio:hover {
+  border-top-color: var(--blue);
+}
+
+.service-card-eventio:hover .service-num {
+  color: var(--light);
+}
+
+.step-dot-eventio {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.20);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: white;
+  position: relative;
+  z-index: 1;
+  background: var(--navy);
+  transition: border-color 300ms, background 300ms;
+}
+
+.step-dot-eventio:hover {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+/* EventIO Role Panels */
+.role-panel-eventio {
+  padding: 4rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 300ms;
+}
+
+.role-panel-eventio.client {
+  background: white;
+}
+
+.role-panel-eventio.client:hover {
+  background: var(--pale);
+}
+
+.role-panel-eventio.provider {
+  background: var(--navy);
+}
+
+.role-panel-eventio.provider:hover {
+  background: #1f4570;
+}
+
+/* EventIO Stats */
+.stat-eventio {
+  padding: 1.75rem 2rem;
+  border-right: 1px solid rgba(74,111,165,0.15);
+  text-align: center;
+}
+
+.stat-eventio:last-child {
+  border-right: none;
+}
+
+/* EventIO Navigation */
+.nav-eventio {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.75rem 3.5rem;
+  background: transparent;
+  transition: background 400ms;
+}
+
+.nav-eventio.scrolled {
+  background: rgba(245,240,234,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(74,111,165,0.12);
+}
+
+/* EventIO Dashboard Styles */
+.dashboard-eventio {
+  background: var(--offwhite);
+  min-height: 100vh;
+}
+
+.sidebar-eventio {
+  background: white;
+  border-right: 1px solid var(--pale);
+  box-shadow: 0 4px 6px -1px rgba(26, 58, 92, 0.1);
+}
+
+.sidebar-eventio-dark {
+  background: var(--navy);
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+/* EventIO Form Styles */
+.form-eventio {
+  background: white;
+  border: 1px solid var(--pale);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(26, 58, 92, 0.1);
+}
+
+.form-eventio-dark {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+}
+
+/* EventIO Loading States */
+.loading-eventio {
+  display: flex;
+  items: center;
+  justify-content: center;
+  padding: 4rem;
+}
+
+.spinner-eventio {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid var(--pale);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* EventIO Responsive Utilities */
+@media (max-width: 768px) {
+  .nav-eventio {
+    padding: 1rem 1.5rem;
+  }
+  
+  .role-panel-eventio {
+    padding: 2rem 1.5rem;
+  }
+  
+  .service-card-eventio {
+    padding: 1.5rem 1rem;
+  }
 }
