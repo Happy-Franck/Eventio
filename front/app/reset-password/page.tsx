@@ -42,46 +42,53 @@ export default function ResetPasswordPage() {
     }
   };
 
+  const inputClass = `w-full px-4 py-3 bg-white/8 border border-white/15 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/25 transition-all duration-300`;
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <EventBackground />
+
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+      </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           {/* Logo/Brand */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 mb-4">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 mb-4 shadow-xl">
               <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2">EventHub</h1>
-            <p className="text-white/60">Set your new password</p>
+            <h1 className="text-4xl font-bold tracking-tight text-white mb-2">EventHub</h1>
+            <p className="text-white/80">Définissez votre nouveau mot de passe</p>
           </div>
 
           {/* Card */}
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8">
+          <div className="bg-white/8 backdrop-blur-xl border border-white/15 rounded-3xl p-8 shadow-2xl">
             {/* Header */}
             <div className="text-center mb-8">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center mb-4">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4 shadow-lg">
                 <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-semibold text-white">Reset Password</h2>
-              <p className="text-white/60 mt-2">Enter your new password</p>
+              <h2 className="text-2xl font-bold tracking-tight text-white">Nouveau mot de passe</h2>
+              <p className="text-white/75 mt-2">Saisissez votre nouveau mot de passe</p>
             </div>
 
             {/* Error Message */}
             {error && (
-              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm backdrop-blur-sm">
+              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm">
                 {error}
               </div>
             )}
 
             {/* Success Message */}
             {success && (
-              <div className="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-200 text-sm backdrop-blur-sm">
+              <div className="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-200 text-sm">
                 {success}
               </div>
             )}
@@ -89,7 +96,8 @@ export default function ResetPasswordPage() {
             {/* Form */}
             {!success && (
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="relative">
+                <div>
+                  <label className="block text-sm font-medium text-white/90 mb-1.5">Adresse email</label>
                   <input
                     id="email"
                     type="email"
@@ -98,13 +106,13 @@ export default function ResetPasswordPage() {
                     onFocus={() => setFocusedField('email')}
                     onBlur={() => setFocusedField(null)}
                     required
-                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300"
-                    placeholder="Email address"
+                    className={inputClass}
+                    placeholder="you@example.com"
                   />
-                  <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'email' ? 'bg-green-500/10 ring-2 ring-green-500/30' : ''}`} />
                 </div>
 
-                <div className="relative">
+                <div>
+                  <label className="block text-sm font-medium text-white/90 mb-1.5">Nouveau mot de passe</label>
                   <input
                     id="password"
                     type="password"
@@ -114,13 +122,13 @@ export default function ResetPasswordPage() {
                     onBlur={() => setFocusedField(null)}
                     required
                     minLength={8}
-                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300"
-                    placeholder="New password"
+                    className={inputClass}
+                    placeholder="Minimum 8 caractères"
                   />
-                  <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password' ? 'bg-green-500/10 ring-2 ring-green-500/30' : ''}`} />
                 </div>
 
-                <div className="relative">
+                <div>
+                  <label className="block text-sm font-medium text-white/90 mb-1.5">Confirmer le mot de passe</label>
                   <input
                     id="password_confirmation"
                     type="password"
@@ -130,16 +138,15 @@ export default function ResetPasswordPage() {
                     onBlur={() => setFocusedField(null)}
                     required
                     minLength={8}
-                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all duration-300"
-                    placeholder="Confirm password"
+                    className={inputClass}
+                    placeholder="Répétez le mot de passe"
                   />
-                  <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password_confirmation' ? 'bg-green-500/10 ring-2 ring-green-500/30' : ''}`} />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold rounded-xl hover:from-green-600 hover:to-teal-600 focus:ring-4 focus:ring-green-400/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full py-3.5 px-6 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 focus:ring-4 focus:ring-blue-400/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
                 >
                   {loading ? (
                     <span className="flex items-center justify-center">
@@ -147,10 +154,10 @@ export default function ResetPasswordPage() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
-                      Resetting...
+                      Réinitialisation...
                     </span>
                   ) : (
-                    'Reset Password'
+                    'Réinitialiser le mot de passe'
                   )}
                 </button>
               </form>
@@ -158,16 +165,16 @@ export default function ResetPasswordPage() {
 
             {/* Back to Login */}
             <div className="mt-8 text-center">
-              <Link href="/login" className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors">
+              <Link href="/login" className="inline-flex items-center gap-2 text-white/75 hover:text-white transition-colors font-medium">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Back to login
+                Retour à la connexion
               </Link>
             </div>
           </div>
 
-          <p className="mt-8 text-center text-white/40 text-sm">
+          <p className="mt-8 text-center text-white/55 text-sm">
             © 2024 EventHub. All rights reserved.
           </p>
         </div>
