@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n';
-import EventBackground from '@/components/EventBackground';
 
 export default function ChooseRolePage() {
   const router = useRouter();
@@ -15,7 +14,6 @@ export default function ChooseRolePage() {
     if (!selectedRole) {
       return;
     }
-    // Redirect to appropriate register page
     if (selectedRole === 'client') {
       router.push('/register/client');
     } else {
@@ -24,137 +22,135 @@ export default function ChooseRolePage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      <EventBackground />
-
-      {/* Floating decorative elements */}
+    <div className="min-h-screen bg-offwhite relative overflow-hidden">
+      {/* EventIO Background Pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-3xl" />
+        {/* Central decorative panel */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 bottom-0 w-1/3 bg-grad-secondary opacity-20" />
+        
+        {/* Decorative circles */}
+        <div className="absolute top-20 left-20 w-48 h-48 border border-blue/20 rounded-full" />
+        <div className="absolute bottom-32 right-20 w-64 h-64 border border-dusty/20 rounded-full" />
+        
+        {/* Floating elements */}
+        <div className="absolute top-1/4 left-1/4 w-6 h-6 bg-blue/30 rounded-full animate-float" />
+        <div className="absolute bottom-1/3 right-1/4 w-4 h-4 bg-dusty/40 rounded-full animate-float" style={{animationDelay: '1s'}} />
+        <div className="absolute top-1/2 left-1/2 w-8 h-8 bg-light/20 rounded-full animate-float" style={{animationDelay: '2s'}} />
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-4xl">
           {/* Logo/Brand */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 mb-4">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-grad-primary mb-6 shadow-xl">
               <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2">Bienvenue sur EventHub!</h1>
-            <p className="text-white/60 text-lg">Choisissez votre rôle pour commencer</p>
+            <div className="font-serif text-5xl font-light text-navy mb-4 tracking-wide">
+              Bienvenue sur <span className="font-cursive text-blue">E</span>ventIO!
+            </div>
+            <p className="text-dusty text-lg font-light tracking-wide">Choisissez votre rôle pour commencer</p>
           </div>
 
           {/* Card */}
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
-            {/* Role Selection */}
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              {/* Client Card */}
+          <div className="card-eventio max-w-5xl mx-auto">
+            {/* Role Selection - EventIO Style */}
+            <div className="grid md:grid-cols-2 gap-2 mb-8">
+              {/* Client Panel - EventIO Style */}
               <button
                 onClick={() => setSelectedRole('client')}
-                className={`relative group p-8 rounded-2xl border-2 transition-all duration-300 text-left ${
+                className={`role-panel-eventio client relative group p-8 rounded-2xl transition-all duration-300 text-left ${
                   selectedRole === 'client'
-                    ? 'border-blue-400 bg-blue-500/20 shadow-lg shadow-blue-500/20'
-                    : 'border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/30'
+                    ? 'ring-2 ring-blue shadow-lg shadow-blue/20'
+                    : ''
                 }`}
               >
-                {/* Selection Indicator */}
                 {selectedRole === 'client' && (
-                  <div className="absolute top-4 right-4 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <div className="absolute top-6 right-6 w-8 h-8 bg-blue rounded-full flex items-center justify-center">
                     <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                 )}
 
-                {/* Icon */}
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-6">
-                  <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-16 h-16 rounded-2xl bg-pale flex items-center justify-center mb-6 shadow-lg">
+                  <svg className="w-8 h-8 text-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
 
-                {/* Content */}
-                <h3 className="text-2xl font-bold text-white mb-3">Je suis un Client</h3>
-                <p className="text-white/70 mb-4">
-                  Je recherche des prestataires pour organiser mes événements
+                <div className="text-xs font-medium text-blue mb-3 tracking-widest uppercase">Pour les clients</div>
+                <h3 className="font-serif text-3xl font-light text-navy mb-4 leading-tight">Je cherche des prestataires pour mon événement</h3>
+                <p className="text-dusty mb-6 leading-relaxed font-light">
+                  Mariages, anniversaires, événements corporate — trouvez les meilleurs talents et gérez votre projet de A à Z.
                 </p>
 
-                {/* Features */}
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2 text-white/60 text-sm">
-                    <svg className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>Rechercher des prestataires</span>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-start gap-3 text-navy text-sm">
+                    <div className="w-1.5 h-1.5 bg-blue rounded-full flex-shrink-0 mt-2"></div>
+                    <span>Recherche filtrée par type, ville, budget</span>
                   </li>
-                  <li className="flex items-start gap-2 text-white/60 text-sm">
-                    <svg className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>Créer et gérer mes événements</span>
+                  <li className="flex items-start gap-3 text-navy text-sm">
+                    <div className="w-1.5 h-1.5 bg-blue rounded-full flex-shrink-0 mt-2"></div>
+                    <span>Comparaison de prestataires côte à côte</span>
                   </li>
-                  <li className="flex items-start gap-2 text-white/60 text-sm">
-                    <svg className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>Réserver des prestations</span>
+                  <li className="flex items-start gap-3 text-navy text-sm">
+                    <div className="w-1.5 h-1.5 bg-blue rounded-full flex-shrink-0 mt-2"></div>
+                    <span>Gestion d'équipe & collections</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-navy text-sm">
+                    <div className="w-1.5 h-1.5 bg-blue rounded-full flex-shrink-0 mt-2"></div>
+                    <span>Suivi du budget en temps réel</span>
                   </li>
                 </ul>
               </button>
 
-              {/* Prestataire Card */}
+              {/* Provider Panel - EventIO Style */}
               <button
                 onClick={() => setSelectedRole('prestataire')}
-                className={`relative group p-8 rounded-2xl border-2 transition-all duration-300 text-left ${
+                className={`role-panel-eventio provider relative group p-8 rounded-2xl transition-all duration-300 text-left ${
                   selectedRole === 'prestataire'
-                    ? 'border-purple-400 bg-purple-500/20 shadow-lg shadow-purple-500/20'
-                    : 'border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/30'
+                    ? 'ring-2 ring-light shadow-lg shadow-navy/20'
+                    : ''
                 }`}
               >
-                {/* Selection Indicator */}
                 {selectedRole === 'prestataire' && (
-                  <div className="absolute top-4 right-4 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="absolute top-6 right-6 w-8 h-8 bg-light rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                 )}
 
-                {/* Icon */}
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-6">
-                  <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-6 shadow-lg">
+                  <svg className="w-8 h-8 text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
 
-                {/* Content */}
-                <h3 className="text-2xl font-bold text-white mb-3">Je suis un Prestataire</h3>
-                <p className="text-white/70 mb-4">
-                  Je propose mes services pour des événements
+                <div className="text-xs font-medium text-light mb-3 tracking-widest uppercase">Pour les prestataires</div>
+                <h3 className="font-serif text-3xl font-light text-white mb-4 leading-tight">Je propose mes services pour des événements</h3>
+                <p className="text-white/70 mb-6 leading-relaxed font-light">
+                  Développez votre activité, gérez vos demandes et construisez une réputation solide sur la première plateforme événementielle française.
                 </p>
 
-                {/* Features */}
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2 text-white/60 text-sm">
-                    <svg className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>Créer mon profil professionnel</span>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-start gap-3 text-white/80 text-sm">
+                    <div className="w-1.5 h-1.5 bg-light rounded-full flex-shrink-0 mt-2"></div>
+                    <span>Profil professionnel mis en valeur</span>
                   </li>
-                  <li className="flex items-start gap-2 text-white/60 text-sm">
-                    <svg className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>Gérer mes prestations</span>
+                  <li className="flex items-start gap-3 text-white/80 text-sm">
+                    <div className="w-1.5 h-1.5 bg-light rounded-full flex-shrink-0 mt-2"></div>
+                    <span>Gestion des demandes entrantes</span>
                   </li>
-                  <li className="flex items-start gap-2 text-white/60 text-sm">
-                    <svg className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>Recevoir des demandes de clients</span>
+                  <li className="flex items-start gap-3 text-white/80 text-sm">
+                    <div className="w-1.5 h-1.5 bg-light rounded-full flex-shrink-0 mt-2"></div>
+                    <span>Statistiques de performance</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-white/80 text-sm">
+                    <div className="w-1.5 h-1.5 bg-light rounded-full flex-shrink-0 mt-2"></div>
+                    <span>Visibilité auprès de milliers de clients</span>
                   </li>
                 </ul>
               </button>
@@ -164,23 +160,23 @@ export default function ChooseRolePage() {
             <button
               onClick={handleContinue}
               disabled={!selectedRole}
-              className="w-full py-4 px-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 focus:ring-4 focus:ring-purple-400/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+              className="btn-eventio btn-eventio-primary w-full"
             >
-              Continuer
+              Continuer →
             </button>
 
             {/* Back Link */}
-            <p className="mt-6 text-center text-white/60 text-sm">
+            <p className="mt-6 text-center text-dusty text-sm">
               Vous avez déjà un compte?{' '}
-              <Link href="/login" className="text-purple-300 hover:text-purple-200 transition-colors">
+              <Link href="/login" className="text-blue hover:text-navy font-semibold transition-colors">
                 Se connecter
               </Link>
             </p>
           </div>
 
           {/* Footer */}
-          <p className="mt-8 text-center text-white/40 text-sm">
-            © 2024 EventHub. All rights reserved.
+          <p className="mt-8 text-center text-dusty/60 text-sm font-light tracking-wide">
+            © 2024 EventIO. Tous droits réservés.
           </p>
         </div>
       </div>

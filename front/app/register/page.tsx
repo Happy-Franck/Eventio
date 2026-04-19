@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { authAPI } from '@/lib/auth';
 import { useTranslation } from '@/lib/i18n';
-import EventBackground from '@/components/EventBackground';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,7 +16,6 @@ export default function RegisterPage() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
   
   // Get role from URL params
   const role = searchParams.get('role') || 'client';
@@ -75,115 +73,116 @@ export default function RegisterPage() {
     window.location.href = authAPI.getOAuthUrl(provider);
   };
 
-  return (
-    <div className="min-h-screen relative overflow-hidden">
-      <EventBackground />
+  const getRoleGradient = () => {
+    return role === 'prestataire' ? 'from-[#c9a96e] to-[#1a3a5c]' : 'from-[#1a3a5c] to-[#4a6fa5]';
+  };
 
-      {/* Floating decorative elements */}
+  return (
+    <div className="min-h-screen bg-cream relative overflow-hidden">
+      {/* EventIO Background Pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-10 w-72 h-72 bg-pink-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl" />
+        {/* Decorative panel - right side for register */}
+        <div className="absolute top-0 right-0 bottom-0 w-2/5 bg-navy opacity-95" 
+             style={{clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0 100%)'}} />
+        
+        {/* Decorative circles */}
+        <div className="absolute top-32 right-16 w-64 h-64 border border-white/10 rounded-full" />
+        <div className="absolute bottom-40 right-24 w-40 h-40 border border-white/8 rounded-full" />
+        
+        {/* Floating elements */}
+        <div className="absolute top-1/4 left-1/4 w-6 h-6 bg-blue/30 rounded-full animate-float" />
+        <div className="absolute bottom-1/3 left-1/3 w-4 h-4 bg-dusty/40 rounded-full animate-float" style={{animationDelay: '1s'}} />
+        <div className="absolute top-1/2 left-1/5 w-8 h-8 bg-light/20 rounded-full animate-float" style={{animationDelay: '2s'}} />
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           {/* Logo/Brand */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 mb-4">
+            <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br ${getRoleGradient()} mb-6 shadow-xl`}>
               <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2">EventHub</h1>
-            <p className="text-white/60">{t('auth.register.subtitle')}</p>
+            <div className="font-serif text-4xl font-light text-navy mb-2 tracking-wide">
+              <span className="font-cursive text-blue mr-1">E</span>ventIO
+            </div>
+            <p className="text-dusty font-light tracking-wide">{t('auth.register.subtitle')}</p>
           </div>
 
           {/* Card */}
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+          <div className="card-eventio">
             {/* Header */}
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-semibold text-white">{t('auth.register.title')}</h2>
-              <p className="text-white/60 mt-1">
+              <h2 className="font-serif text-3xl font-light text-navy mb-2">{t('auth.register.title')}</h2>
+              <p className="text-dusty font-light tracking-wide">
                 {role === 'prestataire' ? 'Inscription en tant que Prestataire' : 'Inscription en tant que Client'}
               </p>
             </div>
 
             {/* Error Message */}
             {error && (
-              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm backdrop-blur-sm">
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                 {error}
               </div>
             )}
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="relative">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
                 <input
                   id="name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  onFocus={() => setFocusedField('name')}
-                  onBlur={() => setFocusedField(null)}
                   required
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/20 transition-all duration-300"
+                  className="input-eventio input-eventio-light"
                   placeholder={t('auth.register.name')}
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'name' ? 'bg-pink-500/10 ring-2 ring-pink-500/30' : ''}`} />
               </div>
 
-              <div className="relative">
+              <div>
                 <input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onFocus={() => setFocusedField('email')}
-                  onBlur={() => setFocusedField(null)}
                   required
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/20 transition-all duration-300"
+                  className="input-eventio input-eventio-light"
                   placeholder={t('auth.emailPlaceholder')}
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'email' ? 'bg-pink-500/10 ring-2 ring-pink-500/30' : ''}`} />
               </div>
 
-              <div className="relative">
+              <div>
                 <input
                   id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  onFocus={() => setFocusedField('password')}
-                  onBlur={() => setFocusedField(null)}
                   required
                   minLength={8}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/20 transition-all duration-300"
+                  className="input-eventio input-eventio-light"
                   placeholder={t('auth.register.password')}
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password' ? 'bg-pink-500/10 ring-2 ring-pink-500/30' : ''}`} />
               </div>
 
-              <div className="relative">
+              <div>
                 <input
                   id="password_confirmation"
                   type="password"
                   value={passwordConfirmation}
                   onChange={(e) => setPasswordConfirmation(e.target.value)}
-                  onFocus={() => setFocusedField('password_confirmation')}
-                  onBlur={() => setFocusedField(null)}
                   required
                   minLength={8}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/20 transition-all duration-300"
+                  className="input-eventio input-eventio-light"
                   placeholder={t('auth.register.confirmPassword')}
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password_confirmation' ? 'bg-pink-500/10 ring-2 ring-pink-500/30' : ''}`} />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 px-6 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold rounded-xl hover:from-pink-600 hover:to-purple-600 focus:ring-4 focus:ring-pink-400/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+                className={`btn-eventio w-full ${role === 'prestataire' ? 'bg-gradient-to-r from-[#c9a96e] to-[#1a3a5c] hover:from-[#d4b578] hover:to-[#2d5a8e]' : 'btn-eventio-primary'}`}
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
@@ -198,7 +197,7 @@ export default function RegisterPage() {
                 )}
               </button>
 
-              <p className="text-xs text-white/40 text-center">
+              <p className="text-xs text-dusty text-center font-light">
                 {t('auth.register.terms')}
               </p>
             </form>
@@ -206,10 +205,10 @@ export default function RegisterPage() {
             {/* Divider */}
             <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/10" />
+                <div className="w-full border-t border-pale" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-transparent text-white/40">{t('auth.login.orContinueWith')}</span>
+                <span className="px-4 bg-white text-dusty">{t('auth.login.orContinueWith')}</span>
               </div>
             </div>
 
@@ -217,7 +216,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => handleOAuth('google')}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 group"
+                className="btn-eventio btn-eventio-secondary flex items-center justify-center gap-2"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -225,39 +224,39 @@ export default function RegisterPage() {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                <span className="text-sm text-white/80 group-hover:text-white transition-colors">Google</span>
+                <span className="text-sm font-medium">Google</span>
               </button>
 
               <button
                 onClick={() => handleOAuth('facebook')}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 group"
+                className="btn-eventio btn-eventio-secondary flex items-center justify-center gap-2"
               >
                 <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
-                <span className="text-sm text-white/80 group-hover:text-white transition-colors">Facebook</span>
+                <span className="text-sm font-medium">Facebook</span>
               </button>
             </div>
 
             {/* Sign In Link */}
-            <p className="mt-8 text-center text-white/60">
+            <p className="mt-8 text-center text-dusty">
               {t('auth.register.haveAccount')}{' '}
-              <Link href="/login" className="text-pink-300 hover:text-pink-200 font-medium transition-colors">
+              <Link href="/login" className="text-blue hover:text-navy font-semibold transition-colors">
                 {t('auth.register.signIn')}
               </Link>
             </p>
             
             {/* Change Role Link */}
-            <p className="mt-4 text-center text-white/60 text-sm">
-              <Link href="/choose-role" className="text-purple-300 hover:text-purple-200 transition-colors">
+            <p className="mt-4 text-center text-dusty text-sm">
+              <Link href="/choose-role" className="text-blue hover:text-navy transition-colors">
                 ← Changer de rôle
               </Link>
             </p>
           </div>
 
           {/* Footer */}
-          <p className="mt-8 text-center text-white/40 text-sm">
-            © 2024 EventHub. All rights reserved.
+          <p className="mt-8 text-center text-dusty/60 text-sm font-light tracking-wide">
+            © 2024 EventIO. Tous droits réservés.
           </p>
         </div>
       </div>
