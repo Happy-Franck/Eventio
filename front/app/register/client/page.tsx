@@ -10,8 +10,7 @@ import EventBackground from '@/components/EventBackground';
 export default function RegisterClientPage() {
   const router = useRouter();
   const { t } = useTranslation();
-  
-  // Form state
+
   const [formData, setFormData] = useState({
     username: '',
     first_name: '',
@@ -23,7 +22,7 @@ export default function RegisterClientPage() {
     password: '',
     password_confirmation: '',
   });
-  
+
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -48,7 +47,7 @@ export default function RegisterClientPage() {
           'Accept': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           ...formData,
           name: `${formData.first_name} ${formData.last_name}`.trim() || formData.username,
           role: 'client'
@@ -84,6 +83,9 @@ export default function RegisterClientPage() {
     window.location.href = authAPI.getOAuthUrl(provider);
   };
 
+  const inputClass = (field: string) =>
+    `w-full px-4 py-3 bg-white/8 border border-white/15 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/25 transition-all duration-300`;
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <EventBackground />
@@ -96,25 +98,25 @@ export default function RegisterClientPage() {
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-2xl">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 mb-4">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 mb-4 shadow-xl">
               <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2">Inscription Client</h1>
-            <p className="text-white/60">Créez votre compte pour organiser vos événements</p>
+            <h1 className="text-4xl font-bold tracking-tight text-white mb-2">Inscription Client</h1>
+            <p className="text-white/80">Créez votre compte pour organiser vos événements</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-white/8 backdrop-blur-xl border border-white/15 rounded-3xl p-8 shadow-2xl">
             {error && (
-              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm backdrop-blur-sm">
+              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Username */}
-              <div className="relative">
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1.5">Nom d'utilisateur *</label>
                 <input
                   name="username"
                   type="text"
@@ -123,15 +125,14 @@ export default function RegisterClientPage() {
                   onFocus={() => setFocusedField('username')}
                   onBlur={() => setFocusedField(null)}
                   required
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder="Nom d'utilisateur (affiché sur la plateforme) *"
+                  className={inputClass('username')}
+                  placeholder="Nom affiché sur la plateforme"
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'username' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
-              {/* First Name & Last Name */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="relative">
+                <div>
+                  <label className="block text-sm font-medium text-white/90 mb-1.5">Prénom *</label>
                   <input
                     name="first_name"
                     type="text"
@@ -140,13 +141,13 @@ export default function RegisterClientPage() {
                     onFocus={() => setFocusedField('first_name')}
                     onBlur={() => setFocusedField(null)}
                     required
-                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                    placeholder="Prénom *"
+                    className={inputClass('first_name')}
+                    placeholder="Prénom"
                   />
-                  <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'first_name' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
                 </div>
 
-                <div className="relative">
+                <div>
+                  <label className="block text-sm font-medium text-white/90 mb-1.5">Nom *</label>
                   <input
                     name="last_name"
                     type="text"
@@ -155,15 +156,14 @@ export default function RegisterClientPage() {
                     onFocus={() => setFocusedField('last_name')}
                     onBlur={() => setFocusedField(null)}
                     required
-                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                    placeholder="Nom *"
+                    className={inputClass('last_name')}
+                    placeholder="Nom de famille"
                   />
-                  <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'last_name' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
                 </div>
               </div>
 
-              {/* Email */}
-              <div className="relative">
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1.5">Email *</label>
                 <input
                   name="email"
                   type="email"
@@ -172,14 +172,13 @@ export default function RegisterClientPage() {
                   onFocus={() => setFocusedField('email')}
                   onBlur={() => setFocusedField(null)}
                   required
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder="Email *"
+                  className={inputClass('email')}
+                  placeholder="you@example.com"
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'email' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
-              {/* Phone */}
-              <div className="relative">
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1.5">Téléphone</label>
                 <input
                   name="phone"
                   type="tel"
@@ -187,14 +186,13 @@ export default function RegisterClientPage() {
                   onChange={handleChange}
                   onFocus={() => setFocusedField('phone')}
                   onBlur={() => setFocusedField(null)}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder="Numéro de téléphone"
+                  className={inputClass('phone')}
+                  placeholder="+33 6 00 00 00 00"
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'phone' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
-              {/* City */}
-              <div className="relative">
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1.5">Ville</label>
                 <input
                   name="city"
                   type="text"
@@ -202,14 +200,13 @@ export default function RegisterClientPage() {
                   onChange={handleChange}
                   onFocus={() => setFocusedField('city')}
                   onBlur={() => setFocusedField(null)}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder="Ville"
+                  className={inputClass('city')}
+                  placeholder="Paris"
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'city' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
-              {/* Address */}
-              <div className="relative">
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1.5">Adresse</label>
                 <input
                   name="address"
                   type="text"
@@ -217,14 +214,13 @@ export default function RegisterClientPage() {
                   onChange={handleChange}
                   onFocus={() => setFocusedField('address')}
                   onBlur={() => setFocusedField(null)}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder="Adresse"
+                  className={inputClass('address')}
+                  placeholder="123 rue de la Paix"
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'address' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
-              {/* Password */}
-              <div className="relative">
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1.5">Mot de passe *</label>
                 <input
                   name="password"
                   type="password"
@@ -234,14 +230,13 @@ export default function RegisterClientPage() {
                   onBlur={() => setFocusedField(null)}
                   required
                   minLength={8}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder="Mot de passe *"
+                  className={inputClass('password')}
+                  placeholder="Minimum 8 caractères"
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
-              {/* Password Confirmation */}
-              <div className="relative">
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1.5">Confirmer le mot de passe *</label>
                 <input
                   name="password_confirmation"
                   type="password"
@@ -251,16 +246,15 @@ export default function RegisterClientPage() {
                   onBlur={() => setFocusedField(null)}
                   required
                   minLength={8}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  placeholder="Confirmer le mot de passe *"
+                  className={inputClass('password_confirmation')}
+                  placeholder="Répétez votre mot de passe"
                 />
-                <div className={`absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 ${focusedField === 'password_confirmation' ? 'bg-blue-500/10 ring-2 ring-blue-500/30' : ''}`} />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 px-6 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 focus:ring-4 focus:ring-blue-400/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full py-3.5 px-6 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 focus:ring-4 focus:ring-blue-400/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
@@ -275,24 +269,24 @@ export default function RegisterClientPage() {
                 )}
               </button>
 
-              <p className="text-xs text-white/40 text-center">
+              <p className="text-xs text-white/55 text-center">
                 En créant un compte, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité
               </p>
             </form>
 
             <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/10" />
+                <div className="w-full border-t border-white/15" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-transparent text-white/40">{t('auth.login.orContinueWith')}</span>
+                <span className="px-4 bg-transparent text-white/60">{t('auth.login.orContinueWith')}</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => handleOAuth('google')}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 group"
+                className="flex items-center justify-center gap-2 py-3 px-4 bg-white/8 border border-white/15 rounded-xl hover:bg-white/15 hover:border-white/25 transition-all duration-300 group"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -300,28 +294,28 @@ export default function RegisterClientPage() {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                <span className="text-sm text-white/80 group-hover:text-white transition-colors">Google</span>
+                <span className="text-sm font-medium text-white/85 group-hover:text-white transition-colors">Google</span>
               </button>
 
               <button
                 onClick={() => handleOAuth('facebook')}
-                className="flex items-center justify-center gap-2 py-3 px-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300 group"
+                className="flex items-center justify-center gap-2 py-3 px-4 bg-white/8 border border-white/15 rounded-xl hover:bg-white/15 hover:border-white/25 transition-all duration-300 group"
               >
                 <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
-                <span className="text-sm text-white/80 group-hover:text-white transition-colors">Facebook</span>
+                <span className="text-sm font-medium text-white/85 group-hover:text-white transition-colors">Facebook</span>
               </button>
             </div>
 
             <div className="mt-8 space-y-3 text-center text-sm">
-              <p className="text-white/60">
+              <p className="text-white/75">
                 {t('auth.register.haveAccount')}{' '}
-                <Link href="/login" className="text-blue-300 hover:text-blue-200 font-medium transition-colors">
+                <Link href="/login" className="text-blue-300 hover:text-blue-200 font-semibold transition-colors">
                   {t('auth.register.signIn')}
                 </Link>
               </p>
-              <p className="text-white/60">
+              <p className="text-white/70">
                 <Link href="/choose-role" className="text-blue-300 hover:text-blue-200 transition-colors">
                   ← Changer de rôle
                 </Link>
@@ -329,7 +323,7 @@ export default function RegisterClientPage() {
             </div>
           </div>
 
-          <p className="mt-8 text-center text-white/40 text-sm">
+          <p className="mt-8 text-center text-white/55 text-sm">
             © 2024 EventHub. All rights reserved.
           </p>
         </div>
