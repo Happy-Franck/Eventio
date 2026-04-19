@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { authAPI, User } from '@/lib/auth';
 import Link from 'next/link';
@@ -44,7 +44,7 @@ export default function ModernDashboardLayout({ user, menuItems, role, children 
   };
 
   const getIconSVG = (iconName: string) => {
-    const icons: Record<string, JSX.Element> = {
+    const icons: Record<string, React.JSX.Element> = {
       home: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -82,7 +82,7 @@ export default function ModernDashboardLayout({ user, menuItems, role, children 
       ),
       briefcase: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       ),
       inbox: (
@@ -105,42 +105,44 @@ export default function ModernDashboardLayout({ user, menuItems, role, children 
     return icons[iconName] || icons.home;
   };
 
-  const getRoleColor = () => {
+  const getRoleGradient = () => {
     switch (role) {
       case 'admin':
-        return 'from-orange-500 to-red-500';
+        return 'bg-gradient-to-r from-[#c9a96e] to-[#1a3a5c]';
       case 'client':
-        return 'from-blue-500 to-cyan-500';
+        return 'bg-gradient-to-r from-[#1a3a5c] to-[#4a6fa5]';
       case 'provider':
-        return 'from-purple-500 to-pink-500';
+        return 'bg-gradient-to-r from-[#4a6fa5] to-[#6b8db8]';
       default:
-        return 'from-gray-500 to-gray-600';
+        return 'bg-gradient-to-r from-[#6b8db8] to-[#a8c0d8]';
     }
   };
 
   return (
-    <div className={`flex h-screen overflow-hidden ${darkMode ? 'dark-theme' : ''}`}>
-      {/* Sidebar */}
+    <div className={`flex h-screen overflow-hidden dashboard-eventio ${darkMode ? 'dark-theme' : ''}`}>
+      {/* Sidebar - EventIO Style */}
       <aside
         className={`${
           sidebarCollapsed ? 'w-20' : 'w-72'
-        } bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300 shadow-lg`}
+        } ${darkMode ? 'sidebar-eventio-dark' : 'sidebar-eventio'} flex flex-col transition-all duration-300`}
       >
         {/* Sidebar Header */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+        <div className="p-6 border-b border-pale flex items-center justify-between">
           {!sidebarCollapsed && (
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${getRoleColor()} flex items-center justify-center`}>
+              <div className={`w-10 h-10 rounded-xl ${getRoleGradient()} flex items-center justify-center shadow-lg`}>
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-white">EventIO</span>
+              <div className="font-serif text-xl font-light text-navy tracking-wide">
+                <span className="font-cursive text-blue mr-1">E</span>ventIO
+              </div>
             </div>
           )}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition"
+            className="p-2 rounded-lg hover:bg-pale text-dusty hover:text-navy transition-all duration-300"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -150,21 +152,21 @@ export default function ModernDashboardLayout({ user, menuItems, role, children 
 
         {/* Navigation */}
         <nav className="flex-1 p-4 overflow-y-auto">
-          <div className="space-y-1">
+          <div className="space-y-2">
             {menuItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium tracking-wide ${
                     isActive
-                      ? 'bg-gradient-to-r ' + getRoleColor() + ' text-white shadow-lg'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                      ? `${getRoleGradient()} text-white shadow-lg transform scale-[1.02]`
+                      : 'text-dusty hover:text-navy hover:bg-pale/50'
                   }`}
                 >
                   {getIconSVG(item.icon)}
-                  {!sidebarCollapsed && <span className="font-medium">{item.label}</span>}
+                  {!sidebarCollapsed && <span>{item.label}</span>}
                 </Link>
               );
             })}
@@ -172,10 +174,10 @@ export default function ModernDashboardLayout({ user, menuItems, role, children 
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+        <div className="p-4 border-t border-pale">
           <button
             onClick={toggleDarkMode}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl hover:bg-pale/50 text-dusty hover:text-navy transition-all duration-300 font-medium"
           >
             {darkMode ? (
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -186,29 +188,31 @@ export default function ModernDashboardLayout({ user, menuItems, role, children 
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             )}
-            {!sidebarCollapsed && <span className="font-medium">{darkMode ? 'Light' : 'Dark'} Mode</span>}
+            {!sidebarCollapsed && <span>{darkMode ? 'Mode Clair' : 'Mode Sombre'}</span>}
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-8 py-4 shadow-sm">
+        {/* Header - EventIO Style */}
+        <header className="bg-white border-b border-pale px-8 py-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white capitalize">{role} Dashboard</h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Welcome back, {user.name}!</p>
+              <h1 className="font-serif text-3xl font-light text-navy capitalize tracking-wide">
+                {role} <span className="font-cursive text-blue">Dashboard</span>
+              </h1>
+              <p className="text-dusty mt-1 font-light tracking-wide">Bienvenue, {user.name}!</p>
             </div>
             <div className="flex items-center gap-4">
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
+                className="btn-eventio btn-eventio-ghost text-sm"
               >
-                Logout
+                Déconnexion
               </button>
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${getRoleColor()} flex items-center justify-center text-white font-bold text-sm`}>
+                <div className={`w-12 h-12 rounded-full ${getRoleGradient()} flex items-center justify-center text-white font-serif text-lg font-medium shadow-lg`}>
                   {user.name.charAt(0).toUpperCase()}
                 </div>
               </div>
@@ -217,7 +221,7 @@ export default function ModernDashboardLayout({ user, menuItems, role, children 
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 p-8">
+        <main className="flex-1 overflow-y-auto bg-offwhite p-8">
           {children}
         </main>
       </div>
