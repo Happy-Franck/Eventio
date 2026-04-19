@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EventIO — Votre Plateforme Événementielle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy:      #1a3a5c;
+    --blue:      #4a6fa5;
+    --dusty:     #6b8db8;
+    --light:     #a8c0d8;
+    --pale:      #dce8f2;
+    --cream:     #f5f0ea;
+    --offwhite:  #faf8f5;
+    --gold:      #c9a96e;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--offwhite);
+    color: var(--navy);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 56px;
+    background: transparent;
+    transition: background 400ms;
+  }
+  nav.scrolled {
+    background: rgba(245,240,234,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(74,111,165,0.12);
+  }
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--navy); text-decoration: none; opacity: 0.7;
+    transition: opacity 200ms;
+  }
+  .nav-links a:hover { opacity: 1; }
+  .nav-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 500; letter-spacing: 0.10em;
+    color: var(--navy); text-align: center;
+  }
+  .nav-brand span {
+    font-family: 'Great Vibes', cursive;
+    font-size: 28px; letter-spacing: 0.02em;
+    color: var(--blue); margin-right: 2px;
+  }
+  .nav-cta {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 10px 28px; border-radius: 999px;
+    background: var(--navy); color: white;
+    border: none; cursor: pointer; font-family: 'Montserrat', sans-serif;
+    transition: background 200ms, transform 200ms;
+  }
+  .nav-cta:hover { background: var(--blue); transform: scale(1.03); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 100vh;
+    background: var(--offwhite);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Blue panel on left */
+  .hero-blue-panel {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    width: 38%;
+    background: var(--navy);
+    clip-path: polygon(0 0, 85% 0, 100% 100%, 0 100%);
+  }
+  .hero-blue-panel::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #1a3a5c 0%, #2d5a8e 60%, #4a6fa5 100%);
+    clip-path: inherit;
+  }
+
+  /* Decorative circles on blue panel */
+  .deco-circle {
+    position: absolute; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* ── POLAROIDS ── */
+  .polaroid-cluster {
+    position: absolute;
+    top: 90px; left: 50%;
+    transform: translateX(-18%);
+    width: 640px; height: 480px;
+  }
+  .polaroid {
+    position: absolute;
+    background: white;
+    padding: 12px 12px 42px;
+    box-shadow: 0 12px 40px rgba(26,58,92,0.18), 0 2px 8px rgba(0,0,0,0.08);
+    cursor: default;
+    transition: transform 400ms ease;
+  }
+  .polaroid:hover { transform: rotate(0deg) scale(1.04) !important; z-index: 10; }
+  .polaroid-img {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 14px; color: rgba(255,255,255,0.6);
+    letter-spacing: 0.05em;
+  }
+  .polaroid-caption {
+    position: absolute; bottom: 10px; left: 0; right: 0;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 13px; color: var(--dusty); letter-spacing: 0.04em;
+  }
+
+  /* ── SCRIPT TAGLINE ── */
+  .script-tagline {
+    font-family: 'Great Vibes', cursive;
+    font-size: 42px;
+    color: var(--blue);
+    position: absolute;
+    bottom: 180px; left: 50%;
+    transform: translateX(-45%);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* ── BIG DISPLAY TEXT ── */
+  .display-block {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 0 56px 36px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+  .display-word {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300; line-height: 0.88;
+    color: var(--navy); letter-spacing: -0.01em;
+    user-select: none;
+  }
+  .display-word.outline {
+    -webkit-text-stroke: 1.5px var(--navy);
+    color: transparent;
+  }
+  .display-word.blue-fill {
+    color: var(--blue);
+  }
+  .display-word em {
+    font-family: 'Great Vibes', cursive;
+    font-style: normal;
+    color: var(--blue);
+  }
+
+  /* ── LEFT COPY ── */
+  .hero-left-copy {
+    position: absolute;
+    top: 50%; left: 56px;
+    transform: translateY(-50%);
+    max-width: 280px; color: rgba(255,255,255,0.80);
+    z-index: 10;
+  }
+  .hero-left-copy p {
+    font-size: 13px; line-height: 1.8; letter-spacing: 0.01em;
+    font-weight: 300; margin-bottom: 20px;
+  }
+  .hero-left-copy .divider {
+    width: 32px; height: 1px; background: var(--light); margin-bottom: 20px;
+  }
+  .hero-left-copy .stat-row {
+    display: flex; gap: 28px;
+  }
+  .hero-left-copy .stat { }
+  .hero-left-copy .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px; font-weight: 300; color: white;
+    line-height: 1;
+  }
+  .hero-left-copy .stat-label {
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--light); margin-top: 4px;
+  }
+
+  /* ── SCROLL HINT ── */
+  .scroll-hint {
+    position: absolute; bottom: 28px; right: 56px;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--dusty); display: flex; align-items: center; gap: 8px;
+  }
+  .scroll-hint::before {
+    content: ''; display: block; width: 28px; height: 1px; background: var(--dusty);
+  }
+
+  /* ── RIGHT SIDE COPY ── */
+  .hero-right-copy {
+    position: absolute;
+    top: 50%; right: 56px;
+    transform: translateY(-50%);
+    max-width: 220px; text-align: right;
+    z-index: 10;
+  }
+  .hero-right-copy p {
+    font-size: 13px; line-height: 1.8; color: var(--navy); opacity: 0.70; margin-bottom: 18px;
+  }
+  .btn-celebrate {
+    display: inline-block; padding: 12px 28px; border-radius: 999px;
+    background: var(--navy); color: white;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+    border: none; cursor: pointer; font-family: 'Montserrat', sans-serif;
+    transition: all 200ms;
+  }
+  .btn-celebrate:hover { background: var(--blue); transform: scale(1.04); }
+
+  /* ── FEATHERS (SVG drawn) ── */
+  .feather {
+    position: absolute; pointer-events: none;
+    opacity: 0.25;
+  }
+
+  /* ── SECTION: SERVICES ── */
+  .section-services {
+    padding: 120px 56px;
+    background: var(--offwhite);
+    position: relative;
+  }
+  .section-label {
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 16px; font-weight: 500;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px; font-weight: 300; color: var(--navy);
+    line-height: 1.1; margin-bottom: 64px; max-width: 480px;
+  }
+  .section-title em { font-style: italic; color: var(--blue); }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 32px;
+  }
+  .service-card {
+    padding: 36px 28px;
+    border-top: 1px solid var(--pale);
+    transition: border-color 300ms;
+    cursor: default;
+  }
+  .service-card:hover { border-top-color: var(--blue); }
+  .service-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px; font-weight: 300;
+    color: var(--pale); line-height: 1;
+    margin-bottom: 20px;
+  }
+  .service-card:hover .service-num { color: var(--light); }
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px; font-weight: 500; color: var(--navy);
+    margin-bottom: 12px; letter-spacing: 0.01em;
+  }
+  .service-desc {
+    font-size: 13px; line-height: 1.8; color: var(--navy);
+    opacity: 0.60; font-weight: 300;
+  }
+
+  /* ── SECTION: HOW IT WORKS ── */
+  .section-how {
+    padding: 100px 56px;
+    background: var(--navy);
+    position: relative; overflow: hidden;
+  }
+  .section-how .section-label { color: var(--light); }
+  .section-how .section-title { color: white; margin-bottom: 56px; }
+  .how-steps {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 0;
+    position: relative;
+  }
+  .how-steps::before {
+    content: '';
+    position: absolute; top: 28px; left: calc(16.6% + 28px); right: calc(16.6% + 28px);
+    height: 1px; background: rgba(255,255,255,0.12);
+  }
+  .step {
+    padding: 0 32px 0 0;
+  }
+  .step-dot {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.20);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 300; color: white;
+    position: relative; z-index: 1;
+    background: var(--navy);
+    transition: border-color 300ms, background 300ms;
+  }
+  .step:hover .step-dot { border-color: var(--blue); background: var(--blue); }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 500; color: white; margin-bottom: 12px;
+  }
+  .step-desc {
+    font-size: 13px; line-height: 1.8; color: rgba(255,255,255,0.55); font-weight: 300;
+  }
+
+  /* ── SECTION: ROLES ── */
+  .section-roles {
+    padding: 100px 56px;
+    background: var(--cream);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+  }
+  .role-panel {
+    padding: 64px 56px;
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    transition: background 300ms;
+  }
+  .role-panel.client { background: white; }
+  .role-panel.client:hover { background: var(--pale); }
+  .role-panel.provider { background: var(--navy); }
+  .role-panel.provider:hover { background: #1f4570; }
+  .role-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 28px;
+  }
+  .role-panel.client .role-icon { background: var(--pale); }
+  .role-panel.provider .role-icon { background: rgba(255,255,255,0.10); }
+  .role-label {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 12px; font-weight: 500;
+  }
+  .role-panel.client .role-label { color: var(--blue); }
+  .role-panel.provider .role-label { color: var(--light); }
+  .role-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px; font-weight: 300; line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .role-panel.client .role-title { color: var(--navy); }
+  .role-panel.provider .role-title { color: white; }
+  .role-desc {
+    font-size: 13px; line-height: 1.8; font-weight: 300;
+    margin-bottom: 32px; max-width: 320px;
+  }
+  .role-panel.client .role-desc { color: rgba(26,58,92,0.65); }
+  .role-panel.provider .role-desc { color: rgba(255,255,255,0.55); }
+  .role-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+  .role-features li {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 300;
+  }
+  .role-panel.client .role-features li { color: var(--navy); }
+  .role-panel.provider .role-features li { color: rgba(255,255,255,0.75); }
+  .check-dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  }
+  .role-panel.client .check-dot { background: var(--blue); }
+  .role-panel.provider .check-dot { background: var(--light); }
+  .role-btn {
+    align-self: flex-start; padding: 12px 32px; border-radius: 999px;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif; font-weight: 500;
+    border: none; cursor: pointer; transition: all 200ms;
+  }
+  .role-panel.client .role-btn { background: var(--navy); color: white; }
+  .role-panel.client .role-btn:hover { background: var(--blue); }
+  .role-panel.provider .role-btn { background: white; color: var(--navy); }
+  .role-panel.provider .role-btn:hover { background: var(--pale); }
+
+  /* ── SECTION: STATS ── */
+  .section-stats {
+    padding: 80px 56px;
+    background: var(--pale);
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 0;
+  }
+  .stat-item {
+    padding: 28px 32px;
+    border-right: 1px solid rgba(74,111,165,0.15);
+    text-align: center;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px; font-weight: 300; color: var(--navy); line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-name {
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--blue); font-weight: 500;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy);
+    padding: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-brand {
+    font-family: 'Great Vibes', cursive;
+    font-size: 36px; color: white;
+  }
+  .footer-links {
+    display: flex; gap: 28px; list-style: none;
+  }
+  .footer-links a {
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.45); text-decoration: none; font-weight: 400;
+    transition: color 200ms;
+  }
+  .footer-links a:hover { color: white; }
+  .footer-copy {
+    font-size: 11px; color: rgba(255,255,255,0.30); letter-spacing: 0.04em;
+  }
+
+  /* Tweaks Panel */
+  #tweaks-panel {
+    display: none;
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    background: white; border: 1px solid #e5e7eb; border-radius: 16px;
+    padding: 20px 22px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    min-width: 220px;
+  }
+  #tweaks-panel h4 { font-size: 12px; font-weight: 600; color: #111; margin-bottom: 14px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .tweak-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 12px; }
+  .tweak-row label { font-size: 12px; color: #374151; }
+  .tweak-row input[type=color] { width: 32px; height: 24px; border: none; border-radius: 6px; cursor: pointer; }
+  .tweak-row input[type=range] { width: 80px; }
+  .tweak-row select { font-size: 11px; padding: 3px 6px; border: 1px solid #e5e7eb; border-radius: 6px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <ul class="nav-links">
+    <li><a href="#">Prestataires</a></li>
+    <li><a href="#">À Propos</a></li>
+  </ul>
+  <div class="nav-brand"><span>E</span>ventIO</div>
+  <div style="display:flex;align-items:center;gap:16px">
+    <a href="#" style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--navy);opacity:0.7;text-decoration:none;font-weight:500">Se Connecter</a>
+    <button class="nav-cta" onclick="document.getElementById('roles-section').scrollIntoView({behavior:'smooth'})">Commencer</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <!-- Blue left panel -->
+  <div class="hero-blue-panel">
+    <!-- Decorative rings on blue -->
+    <div class="deco-circle" style="width:320px;height:320px;top:-60px;left:-100px;"></div>
+    <div class="deco-circle" style="width:200px;height:200px;bottom:100px;left:40px;"></div>
+  </div>
+
+  <!-- Left copy (on blue) -->
+  <div class="hero-left-copy">
+    <p>De la première esquisse<br>à la célébration finale,<br>nous orchestrons chaque détail<br>avec intention.</p>
+    <div class="divider"></div>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">50K+</div>
+        <div class="stat-label">Événements</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2K+</div>
+        <div class="stat-label">Prestataires</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Polaroid cluster -->
+  <div class="polaroid-cluster">
+    <!-- Left polaroid -->
+    <div class="polaroid" style="width:200px;height:260px;top:20px;left:0;transform:rotate(-6deg)">
+      <div class="polaroid-img" style="background:linear-gradient(135deg,#4a6fa5,#6b8db8);height:calc(100% - 30px)">
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.5)" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </div>
+      <div class="polaroid-caption">mariage · paris</div>
+    </div>
+    <!-- Center polaroid (main) -->
+    <div class="polaroid" style="width:240px;height:300px;top:0;left:160px;transform:rotate(2deg);z-index:2">
+      <div class="polaroid-img" style="background:linear-gradient(160deg,#1a3a5c,#2d5a8e,#4a6fa5);height:calc(100% - 30px)">
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.5)" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+      </div>
+      <div class="polaroid-caption" style="font-size:15px;color:#4a6fa5">l'amour est dans l'air</div>
+    </div>
+    <!-- Right polaroid -->
+    <div class="polaroid" style="width:195px;height:255px;top:30px;left:360px;transform:rotate(5deg)">
+      <div class="polaroid-img" style="background:linear-gradient(135deg,#2d5a8e,#1a3a5c);height:calc(100% - 30px)">
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.5)" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-1.5-.454M9 6l3 3m0 0l3-3m-3 3V2"/></svg>
+      </div>
+      <div class="polaroid-caption">célébrer ensemble</div>
+    </div>
+  </div>
+
+  <!-- Script tagline -->
+  <div class="script-tagline">votre moment parfait</div>
+
+  <!-- Right copy -->
+  <div class="hero-right-copy">
+    <p>Créez des moments qui restent gravés bien après le dernier verre.</p>
+    <button class="btn-celebrate" onclick="document.getElementById('roles-section').scrollIntoView({behavior:'smooth'})">Commencer →</button>
+  </div>
+
+  <!-- Feathers (SVG) -->
+  <svg class="feather" style="top:220px;left:38%;width:45px;transform:rotate(-30deg)" viewBox="0 0 40 120" fill="none">
+    <path d="M20 115 Q18 80 10 55 Q5 35 20 10 Q35 35 30 55 Q22 80 20 115Z" fill="#4a6fa5"/>
+    <line x1="20" y1="10" x2="20" y2="115" stroke="rgba(255,255,255,0.4)" stroke-width="0.6"/>
+    <path d="M20 30 Q14 40 10 55" stroke="rgba(255,255,255,0.25)" stroke-width="0.4"/>
+    <path d="M20 40 Q26 50 30 55" stroke="rgba(255,255,255,0.25)" stroke-width="0.4"/>
+    <path d="M20 55 Q13 65 11 75" stroke="rgba(255,255,255,0.25)" stroke-width="0.4"/>
+    <path d="M20 60 Q27 68 29 77" stroke="rgba(255,255,255,0.25)" stroke-width="0.4"/>
+  </svg>
+
+  <svg class="feather" style="bottom:130px;right:14%;width:30px;transform:rotate(20deg)" viewBox="0 0 40 120" fill="none">
+    <path d="M20 115 Q18 80 10 55 Q5 35 20 10 Q35 35 30 55 Q22 80 20 115Z" fill="#4a6fa5"/>
+    <line x1="20" y1="10" x2="20" y2="115" stroke="rgba(74,111,165,0.6)" stroke-width="0.6"/>
+  </svg>
+
+  <svg class="feather" style="top:300px;right:8%;width:22px;transform:rotate(-15deg)" viewBox="0 0 40 120" fill="none">
+    <path d="M20 115 Q18 80 10 55 Q5 35 20 10 Q35 35 30 55 Q22 80 20 115Z" fill="#6b8db8"/>
+    <line x1="20" y1="10" x2="20" y2="115" stroke="rgba(107,141,184,0.5)" stroke-width="0.6"/>
+  </svg>
+
+  <!-- Large display text -->
+  <div class="display-block">
+    <div style="display:flex;align-items:flex-end;gap:0">
+      <div class="display-word" style="font-size:clamp(72px,10vw,140px)">Event</div>
+      <div class="display-word blue-fill" style="font-size:clamp(72px,10vw,140px)"><em>IO</em></div>
+    </div>
+    <div class="scroll-hint">Scroll to see more ↓</div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section-services">
+  <div class="section-label">Nos Services</div>
+  <h2 class="section-title">Tout ce dont vous avez besoin pour un <em>événement parfait</em></h2>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-name">Photographie & Vidéo</div>
+      <div class="service-desc">Des artistes qui capturent vos émotions avec sensibilité — de l'arrivée des premiers invités au dernier instant de la soirée.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-name">Traiteur & Art de la Table</div>
+      <div class="service-desc">Des chefs talentueux qui transforment chaque repas en une expérience culinaire mémorable, adaptée à votre vision et votre budget.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-name">Musique & Animation</div>
+      <div class="service-desc">DJs, orchestres, animateurs — des artistes qui donnent le ton et maintiennent l'énergie tout au long de votre célébration.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <div class="service-name">Fleuriste & Décoration</div>
+      <div class="service-desc">Des créateurs qui habillent votre espace avec des compositions florales sur mesure et une décoration qui vous ressemble.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">05</div>
+      <div class="service-name">Lieu & Réception</div>
+      <div class="service-desc">Châteaux, salles de prestige, jardins secrets — trouvez l'écrin parfait pour votre événement, quelle que soit sa taille.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">06</div>
+      <div class="service-name">Coordination</div>
+      <div class="service-desc">Des wedding planners et coordinateurs expérimentés pour orchestrer chaque détail et vous permettre de vivre pleinement votre jour.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section-how">
+  <div class="section-label">Comment ça fonctionne</div>
+  <h2 class="section-title">Simple, rapide,<br><em style="font-style:italic;color:var(--light)">élégant.</em></h2>
+  <div class="how-steps">
+    <div class="step">
+      <div class="step-dot">1</div>
+      <div class="step-title">Choisissez votre rôle</div>
+      <div class="step-desc">Vous organisez un événement ou vous êtes prestataire ? EventIO s'adapte à vos besoins en quelques secondes.</div>
+    </div>
+    <div class="step">
+      <div class="step-dot">2</div>
+      <div class="step-title">Explorez & Connectez</div>
+      <div class="step-desc">Parcourez les profils vérifiés, comparez les offres, et entrez en contact directement avec les prestataires qui vous correspondent.</div>
+    </div>
+    <div class="step">
+      <div class="step-dot">3</div>
+      <div class="step-title">Célébrez sereinement</div>
+      <div class="step-desc">Gérez votre équipe, votre budget et vos sélections depuis un seul tableau de bord. Votre événement entre de bonnes mains.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section class="section-roles" id="roles-section">
+  <div class="role-panel client">
+    <div class="role-icon">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#4a6fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+      </svg>
+    </div>
+    <div class="role-label">Pour les clients</div>
+    <h3 class="role-title">Je cherche des prestataires pour mon événement</h3>
+    <p class="role-desc">Mariages, anniversaires, événements corporate — trouvez les meilleurs talents et gérez votre projet de A à Z.</p>
+    <ul class="role-features">
+      <li><span class="check-dot"></span>Recherche filtrée par type, ville, budget</li>
+      <li><span class="check-dot"></span>Comparaison de prestataires côte à côte</li>
+      <li><span class="check-dot"></span>Gestion d'équipe & collections</li>
+      <li><span class="check-dot"></span>Suivi du budget en temps réel</li>
+    </ul>
+    <button class="role-btn" onclick="window.location.href='ui_kits/app/index.html'">Je suis un Client →</button>
+  </div>
+  <div class="role-panel provider">
+    <div class="role-icon">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+    </div>
+    <div class="role-label">Pour les prestataires</div>
+    <h3 class="role-title">Je propose mes services pour des événements</h3>
+    <p class="role-desc">Développez votre activité, gérez vos demandes et construisez une réputation solide sur la première plateforme événementielle française.</p>
+    <ul class="role-features">
+      <li><span class="check-dot"></span>Profil professionnel mis en valeur</li>
+      <li><span class="check-dot"></span>Gestion des demandes entrantes</li>
+      <li><span class="check-dot"></span>Statistiques de performance</li>
+      <li><span class="check-dot"></span>Visibilité auprès de milliers de clients</li>
+    </ul>
+    <button class="role-btn" onclick="window.location.href='ui_kits/app/index.html'">Je suis un Prestataire →</button>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="section-stats">
+  <div class="stat-item">
+    <div class="stat-number">50K+</div>
+    <div class="stat-name">Événements Créés</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">2K+</div>
+    <div class="stat-name">Prestataires Vérifiés</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">99.9%</div>
+    <div class="stat-name">Satisfaction Client</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">12</div>
+    <div class="stat-name">Villes Couvertes</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">EventIO</div>
+  <ul class="footer-links">
+    <li><a href="#">Prestataires</a></li>
+    <li><a href="#">À Propos</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="#">Confidentialité</a></li>
+  </ul>
+  <div class="footer-copy">© 2024 EventIO. Tous droits réservés.</div>
+</footer>
+
+<!-- Tweaks Panel -->
+<div id="tweaks-panel">
+  <h4>Tweaks</h4>
+  <div class="tweak-row">
+    <label>Couleur principale</label>
+    <input type="color" id="tw-blue" value="#4a6fa5">
+  </div>
+  <div class="tweak-row">
+    <label>Couleur marine</label>
+    <input type="color" id="tw-navy" value="#1a3a5c">
+  </div>
+  <div class="tweak-row">
+    <label>Police display</label>
+    <select id="tw-font">
+      <option value="'Cormorant Garamond', serif">Cormorant</option>
+      <option value="'Playfair Display', serif">Playfair</option>
+      <option value="'Georgia', serif">Georgia</option>
+    </select>
+  </div>
+  <div class="tweak-row">
+    <label>Taille hero</label>
+    <input type="range" id="tw-hero-size" min="80" max="160" value="140">
+  </div>
+</div>
+
+<script>
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Tweaks system
+const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
+  "blueColor": "#4a6fa5",
+  "navyColor": "#1a3a5c",
+  "displayFont": "'Cormorant Garamond', serif",
+  "heroSize": 140
+}/*EDITMODE-END*/;
+
+function applyTweaks(t) {
+  document.documentElement.style.setProperty('--blue', t.blueColor || TWEAK_DEFAULS.blueColor);
+  document.documentElement.style.setProperty('--navy', t.navyColor || TWEAK_DEFAULS.navyColor);
+  const f = t.displayFont || TWEAK_DEFAULS.displayFont;
+  document.querySelectorAll('.display-word, .section-title, .role-title, .stat-number, .service-name, .step-title, .nav-brand, .footer-brand').forEach(el => el.style.fontFamily = f);
+  const hs = t.heroSize || TWEAK_DEFAULS.heroSize;
+  document.querySelectorAll('.display-word').forEach(el => el.style.fontSize = hs + 'px');
+}
+
+applyTweaks(TWEAK_DEFAULS);
+
+// Tweaks panel wire-up
+document.getElementById('tw-blue').addEventListener('input', e => {
+  const vals = { blueColor: e.target.value };
+  applyTweaks({...TWEAK_DEFAULS, ...vals});
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: vals }, '*');
+});
+document.getElementById('tw-navy').addEventListener('input', e => {
+  const vals = { navyColor: e.target.value };
+  applyTweaks({...TWEAK_DEFAULS, ...vals});
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: vals }, '*');
+});
+document.getElementById('tw-font').addEventListener('change', e => {
+  const vals = { displayFont: e.target.value };
+  applyTweaks({...TWEAK_DEFAULS, ...vals});
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: vals }, '*');
+});
+document.getElementById('tw-hero-size').addEventListener('input', e => {
+  const vals = { heroSize: +e.target.value };
+  applyTweaks({...TWEAK_DEFAULS, ...vals});
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: vals }, '*');
+});
+
+// Edit mode host protocol
+window.addEventListener('message', e => {
+  if (e.data?.type === '__activate_edit_mode') document.getElementById('tweaks-panel').style.display = 'block';
+  if (e.data?.type === '__deactivate_edit_mode') document.getElementById('tweaks-panel').style.display = 'none';
+});
+window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+</script>
+</body>
+</html>
